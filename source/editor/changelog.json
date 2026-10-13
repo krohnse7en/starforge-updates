@@ -1,0 +1,54 @@
+{
+  "releases": [
+    {
+      "version": "0.15.0",
+      "date": "2026-10-13",
+      "changes": [
+        "Scatter has a Snap to surface checkbox, on by default. Turn it off for random floating heights; the choice is remembered.",
+        "Land floating scenery stays above the preview surface. Space floating scenery can sit below zero. Original campaign placement limits are -1,000 to 4,232 units; collision checks still apply.",
+        "Short timeline clips keep their names and shorten them with an ellipsis. Hover to see the full name.",
+        "All selected timeline clips now show their green outlines, matching the workspace selection.",
+        "After selecting an object, Ctrl+A selects the objects currently visible in the workspace, respecting filters and the preview frame.",
+        "Help now has a Changelog button beside Check for updates. Every published update must include a matching changelog entry.",
+        "Selection menu beside Display offers Select All, Select All Type, exact-asset Select Similar and Select Inverse, with keyboard shortcuts; all use the current visible frame.",
+        "Paste in Place (Ctrl+Shift+V) preserves copied positions, appearance times, rotation, size and paths, without offsets.",
+        "Optional Collision protection in Edit starts off. Pasted sets move to the nearest checked clear left/right position only, keeping height and forward/back coordinates; it also applies to Paste in Place.",
+        "Editor source is published on GitHub under MIT. Generated game artwork, audio, levels, personal files and signing keys are excluded; developer setup imports local assets separately."
+      ]
+    },
+    {
+      "version": "0.14.1",
+      "date": "2026-10-13",
+      "changes": [
+        "Single scenery clips and scattered copies show their library names instead of Scenery pair.",
+        "Older matching pairs show Name × 2; different pairs show both names. Properties and history use the same scenery names."
+      ]
+    },
+    {
+      "version": "0.14.0",
+      "date": "2026-10-13",
+      "changes": [
+        "Detours add local bends rather than shifting the whole path. The start and end stay fixed, and Undo restores the old route.",
+        "Enemies, enemy groups and scenery can be selected and copied together. Edit has Copy and Paste buttons.",
+        "Scatter checks nearby objects, other scattered items and later preview routes; a blocked batch adds nothing.",
+        "Shuffle beside the project name creates another planet or zone name. Undo restores the previous name."
+      ]
+    },
+    {
+      "version": "0.13.1",
+      "date": "2026-10-13",
+      "changes": [
+        "Fixed secure GitHub update-feed connections on Windows."
+      ]
+    },
+    {
+      "version": "0.13.0",
+      "date": "2026-10-13",
+      "changes": [
+        "First public GitHub tester release and signed automatic updater, with hourly checks, project backups and reopening after installation.",
+        "Expanded the shared scenery library to 155 pieces and added Scatter, pinned library/timeline navigation and automatic detours.",
+        "The secure-connection fix for this first updater build is in v0.13.1."
+      ]
+    }
+  ]
+}

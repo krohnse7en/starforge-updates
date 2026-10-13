@@ -1,0 +1,7 @@
+{
+  "enabled": false,
+  "channel": "testers",
+  "feed": "https://raw.githubusercontent.com/krohnse7en/starforge-updates/main/channels/testers.json",
+  "downloadPrefix": "https://github.com/krohnse7en/starforge-updates/releases/download/",
+  "publicKey": "<RSAKeyValue><Modulus>qzF56SGroQQZiVcOxs2wOBDDf6WKLlkvJWUvDUddHU9xBVLnJKeE/DT06sAfs1UWEa6uKh1q8jRFAr5fhqAdS4mM28kdyxvtsjN1q7gtczE+d6iYXMuFNPAkDWyyidJDcxnCnTfiSo8kb3x+y6WSrQlxwA1LjrSdhxCEozkPGzpu3N4bx7iQ5fD0Ag6ehrfoTJvHEoQE4ot9q8Qjp1BGysaScEWRl3DPvf3ifNxZeaCaxriYRTyqjdlHXuMfl4OGNBGFXPKjjo8UCsaNnEQ3MwKXYxkTgfmm+iZ+BN3LtdV/JRCIaoLe64tEFq/LkwOY83omTSx535YRWNZxYOaiHQ==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>"
+}

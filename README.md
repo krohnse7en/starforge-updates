@@ -21,3 +21,8 @@ The `channels/testers.json` feed is signed. It contains public release metadata 
 Include the version, stage, object name, preview time and reproduction steps in bug reports. Review debug reports before sharing them; they can contain local file paths and project contents. Use Starship to confirm actual collision, terrain, damage and stage-specific behavior.
 
 This repository distributes builds and release metadata. Starship and bundled dependency credits/licenses are inside each download.
+
+
+## Source code
+
+The [StarForge editor source](source/SOURCE_README.md) is MIT licensed. The source folder includes the browser UI, Windows launcher/updater, development setup tools and modified Starship runtime snapshots. Generated game audio, artwork and level data are imported locally and are not included in the source tree. Private projects, saves and signing keys are excluded. Third-party code retains its own licenses; see [source/THIRD_PARTY.md](source/THIRD_PARTY.md).
