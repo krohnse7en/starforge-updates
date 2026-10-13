@@ -55,8 +55,8 @@ extern "C" int StarForge_EnvironmentLevel(int fallback,int backdrop,int enabled)
 extern "C" void StarForge_Load(void){pathProgressReady=false;remixScales.clear();remixSkews.clear();
  waves.clear();scenery.clear();names.clear();originalEnemyScripts.clear();originalAuxScripts.clear();originalScopeTargets.clear();originalScriptScope.clear();project=json::object();sectionDuration=150;
  try{
-  std::ifstream file("StarForge/project.json");if(!file)return;
-  auto j=json::parse(file);StarForge_GroupLoad(j.dump().c_str());if(j.at("schema")!="starforge.level.v1"||j.at("stage")!="Corneria")return;
+  std::ifstream file("StarForge/project.json");if(!file)throw std::runtime_error("Project file missing");
+  auto j=json::parse(file);StarForge_GroupLoad(j.dump().c_str());if(j.at("schema")!="starforge.level.v1"||j.at("stage")!="Corneria")throw std::runtime_error("Unsupported project format");
   sectionDuration=j.contains("duration")?Number(j,"duration",1,600):150;
   if(j["waves"].size()>500||j["scenery"].size()>500)throw std::runtime_error("object count");
   std::unordered_map<std::string,int> scopes;int nextAux=1000;
@@ -85,7 +85,7 @@ extern "C" void StarForge_Load(void){pathProgressReady=false;remixScales.clear()
   for(auto& w:project["waves"])if(w.contains("memberPaths")){auto& paths=w["memberPaths"];if(!paths.is_array()||paths.size()!=w.at("count").get<int>())throw std::runtime_error("member path count");for(auto& nodes:paths){if(!nodes.is_array()||nodes.size()<2||nodes.size()>4096)throw std::runtime_error("member path points");for(auto& p:nodes){Number(p,"x",-1000000,1000000);Number(p,"y",-1000000,1000000);Number(p,"z",-1000000,1000000);}}}
   eventDone.assign(project["events"].size(),false);itemDone.assign(project["items"].size(),false);triggerOrigin.assign(eventDone.size(),-1);customMessages.clear();customMessages.resize(eventDone.size());
   std::ofstream("StarForge/load-status.txt")<<"Project loaded: "<<waves.size()<<" waves, "<<scenery.size()<<" scenery pairs.\n";
- }catch(const std::exception& e){waves.clear();scenery.clear();names.clear();originalEnemyScripts.clear();originalAuxScripts.clear();originalScopeTargets.clear();originalScriptScope.clear();project=json::object();sectionDuration=150;std::ofstream("StarForge/load-status.txt")<<"Project rejected: "<<e.what()<<". Using built-in remix.\n";}
+ }catch(const std::exception& e){waves.clear();scenery.clear();names.clear();originalEnemyScripts.clear();originalAuxScripts.clear();originalScopeTargets.clear();originalScriptScope.clear();project=json::object();sectionDuration=150;project["schema"]="starforge.level.v1";std::ofstream("StarForge/load-status.txt")<<"Project rejected: "<<e.what()<<". Playtest stopped; return to the editor and fix the project.\n";}
 }
 extern "C" const CR_Encounter* StarForge_Waves(int* count){*count=waves.size();static const CR_Encounter empty={};return waves.empty()?(project.contains("schema")?&empty:nullptr):waves.data();}
 extern "C" const CR_Setting* StarForge_Scenery(int* count){*count=scenery.size();static const CR_Setting empty={};return scenery.empty()?(project.contains("schema")?&empty:nullptr):scenery.data();}

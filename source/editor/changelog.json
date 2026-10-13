@@ -13,7 +13,11 @@
         "Selection menu beside Display offers Select All, Select All Type, exact-asset Select Similar and Select Inverse, with keyboard shortcuts; all use the current visible frame.",
         "Paste in Place (Ctrl+Shift+V) preserves copied positions, appearance times, rotation, size and paths, without offsets.",
         "Optional Collision protection in Edit starts off. Pasted sets move to the nearest checked clear left/right position only, keeping height and forward/back coordinates; it also applies to Paste in Place.",
-        "Editor source is published on GitHub under MIT. Generated game artwork, audio, levels, personal files and signing keys are excluded; developer setup imports local assets separately."
+        "Editor source is published on GitHub under MIT. Generated game artwork, audio, levels, personal files and signing keys are excluded; developer setup imports local assets separately.",
+        "Open Path beside Save As opens Windows File Explorer with the saved project selected. It stays disabled until a file location is known.",
+        "Active actor count is shown separately from rendered meshes. More than 60 simultaneous actors triggers an insertion warning with Undo or Ignore.",
+        "Opening an over-limit project jumps to its first overloaded frame. Playtest warns again, with an optional Do Not Show Again checkbox. Counts follow the preview; game-generated actors can need additional slots.",
+        "Playtest checks item coordinates before launching. Rejected projects no longer silently switch to built-in remix enemies, and game load errors are shown in the editor."
       ]
     },
     {
@@ -21,7 +25,7 @@
       "date": "2026-10-13",
       "changes": [
         "Single scenery clips and scattered copies show their library names instead of Scenery pair.",
-        "Older matching pairs show Name × 2; different pairs show both names. Properties and history use the same scenery names."
+        "Older matching pairs show Name \u00d7 2; different pairs show both names. Properties and history use the same scenery names."
       ]
     },
     {
