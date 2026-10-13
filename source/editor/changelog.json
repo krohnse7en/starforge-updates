@@ -1,6 +1,35 @@
 {
   "releases": [
     {
+      "version": "0.16.2",
+      "date": "2026-10-13",
+      "changes": [
+        "Reorganized Properties into collapsible task sections while keeping the original Object Library cards and previews. Project menus now stack correctly, close each other, and share matching heights with the top-row controls.",
+        "Floor-safe enemy insertion now checks the full predicted flight route and raises the initial spawn height enough for its lowest point, preserving route shape, timing and formation spacing.",
+        "Added Edit \u2192 Raise spawn above floor to apply the same check to an existing selected enemy or group. ",
+        "Help is organized into task-based sections; related selection, scatter and movement guidance is consolidated, and fix-specific notes are folded into troubleshooting.",
+        "New enemies now default to Static side-to-side movement. Existing saved choices remain unchanged."
+      ]
+    },
+    {
+      "version": "0.16.1",
+      "date": "2026-10-13",
+      "changes": [
+        "Fixed the Project dropdown appearing behind the editing toolbar. New, Open, Save As and Open Path now stay fully visible. Local preview only; publication remains on hold for testing.",
+        "Top-level menus close each other when another opens. Click outside or press Escape to dismiss them.",
+        "Restored the original Object Library cards with all previews visible and direct click-to-add, while keeping the organized Properties and other layout improvements.",
+        "Aligned the level name field, shuffle button, top-row menus and action buttons to the same height."
+      ]
+    },
+    {
+      "version": "0.16.0",
+      "date": "2026-10-13",
+      "changes": [
+        "New enemy insertions in land rail stages are lifted above the preview floor or terrain when their model would extend below it. Groups retain their relative heights; space rail placement is unchanged.",
+        "Reorganized editor controls, collapsible Properties sections, and a compact Object Library with a single selected-item preview. Existing tools and shortcuts remain available."
+      ]
+    },
+    {
       "version": "0.15.2",
       "date": "2026-10-13",
       "changes": [
