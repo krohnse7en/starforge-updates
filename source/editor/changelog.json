@@ -1,6 +1,14 @@
 {
   "releases": [
     {
+      "version": "0.16.3",
+      "date": "2026-10-13",
+      "changes": [
+        "Help article headings are now larger than body text, with clearer spacing and no tiny all-caps styling.",
+        "Removed Tester setup from the in-app Help manual. Installation instructions remain in the download package."
+      ]
+    },
+    {
       "version": "0.16.2",
       "date": "2026-10-13",
       "changes": [
