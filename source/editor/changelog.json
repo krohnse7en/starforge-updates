@@ -1,6 +1,15 @@
 {
   "releases": [
     {
+      "version": "0.15.2",
+      "date": "2026-10-13",
+      "changes": [
+        "Fixed authored Straight enemy preview missing the side-to-side sway already used in Starship, including Venom tanks. Workspace routes and placement collision checks now follow the same sway. Custom flight paths and Original movement retain their own behavior.",
+        "Added Sway / Static in enemy Properties for authored Straight movement. Static removes lateral sway in both preview and playtest while retaining forward movement.",
+        "Added an explicit Face flight path checkbox for authored custom enemy paths, off by default, controlling orientation in preview and playtest."
+      ]
+    },
+    {
       "version": "0.15.1",
       "date": "2026-10-13",
       "changes": [

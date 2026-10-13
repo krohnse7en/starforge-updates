@@ -50,3 +50,11 @@ float StarForge_RemixNativeSpeed(int entry,float original);
 #ifdef __cplusplus
 }
 #endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+int StarForge_SwayEnabled(int entry);
+#ifdef __cplusplus
+}
+#endif

@@ -165,3 +165,5 @@ extern "C" int StarForge_CruiserGuns(int entry,int* side){try{auto&w=project.at(
 
 extern "C" int StarForge_RemixNativeId(int entry){try{return project.at("waves").at(entry).at("nativeObject").at("id").get<int>();}catch(...){return 0;}}
 extern "C" float StarForge_RemixNativeSpeed(int entry,float original){try{return project.at("waves").at(entry).at("nativeObject").at("parameters").value("birdSpeed",original);}catch(...){return original;}}
+
+extern "C" int StarForge_SwayEnabled(int entry){try{return project.at("waves").at(entry).value("sideToSide",std::string("sway"))!="static";}catch(...){return 1;}}
