@@ -62,6 +62,7 @@ extern "C" void StarForge_Load(void){pathProgressReady=false;remixScales.clear()
   std::unordered_map<std::string,int> scopes;int nextAux=1000;
   originalEnemyScripts.resize(j["waves"].size());names.reserve(j["waves"].size());waves.reserve(j["waves"].size());
   for(auto& w:j["waves"]){
+   if(w.contains("nativeObject")){auto& n=w["nativeObject"];if(n.at("id").get<int>()!=235)throw std::runtime_error("Unsupported native actor");if(n.contains("parameters"))Number(n["parameters"],"birdSpeed",0,100);}
    names.push_back(w.at("name").get<std::string>());if(names.back().size()>400)throw std::runtime_error("name length");
    CR_Encounter e={};e.time=Number(w,"time",0,sectionDuration);e.script=Number(w,"script",140,307);if((e.script>=164&&e.script<200)||e.script==143||e.script==144||e.script==145)throw std::runtime_error("enemy script");
    e.mode=Number(w,"mode",0,29);e.count=Number(w,"count",1,12);e.x=Number(w,"x",-32768,32767);e.y=Number(w,"y",-32768,32767);e.gap=Number(w,"gap",150,700);e.depth=Number(w,"depth",-30000,30000);e.speed=Number(w,"speed",-3000,3000);e.setPiece=Number(w,"setPiece",0,3);e.name=names.back().c_str();if(w.contains("formationOffsets")){auto& offsets=w["formationOffsets"];if(!offsets.is_array()||offsets.size()>12)throw std::runtime_error("formation count");for(auto& p:offsets){Number(p,"x",-60000,60000);Number(p,"y",-60000,60000);Number(p,"z",-60000,60000);}}
@@ -161,3 +162,6 @@ extern "C" float StarForge_ReactAge(void*object,int entry,float age,float z,floa
 extern "C" void StarForge_ReactForget(void*object){reactStates.erase(object);}
 
 extern "C" int StarForge_CruiserGuns(int entry,int* side){try{auto&w=project.at("waves").at(entry);int type=w.value("script",0)>=200?w.value("script",0)-200:w.value("script",0)==143?17:-1;if(w.contains("nativeMovement"))for(auto&c:w["nativeMovement"]["commands"])if(c.value("opcode",0)==104){type=c.value("value",-1);break;}if(type!=17||w.value("decorative",false))return 0;*side=w.value("cruiserGunSide",std::string("left"))=="right"?1:-1;return w.value("cruiserGuns",7)==5?5:7;}catch(...){return 0;}}
+
+extern "C" int StarForge_RemixNativeId(int entry){try{return project.at("waves").at(entry).at("nativeObject").at("id").get<int>();}catch(...){return 0;}}
+extern "C" float StarForge_RemixNativeSpeed(int entry,float original){try{return project.at("waves").at(entry).at("nativeObject").at("parameters").value("birdSpeed",original);}catch(...){return original;}}

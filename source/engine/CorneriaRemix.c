@@ -59,6 +59,9 @@ uint16_t* CorneriaRemix_Script(int script){
     if(script>=146)return variety[script-146];
     switch(script){case 140:return fighter;case 141:return robot;case 142:return rock;case 143:return cruiser;case 144:return carrier;default:return turret;}
 }
+extern void Actor_Load(Actor*,ObjectInit*);
+static int SpawnNativeBird(int entry,int lane,float x,float y,float depth){int i;ObjectInit init={0};float rotation[3]={0};for(i=0;i<60;i++)if(gActors[i].obj.status==OBJ_FREE)break;if(i==60)return -1;StarForge_OriginalSpawnRotation(entry,rotation);init.id=235;init.xPos=x;init.yPos=y;init.zPos1=gPathProgress;init.zPos2=3000-depth;init.rot.x=(s16)rotation[0];init.rot.y=(s16)rotation[1];init.rot.z=(s16)rotation[2];Actor_Load(&gActors[i],&init);gActors[i].index=i;memset(&tracks[i],0,sizeof(tracks[i]));tracks[i].used=1;tracks[i].entry=entry;tracks[i].lane=lane;tracks[i].mode=0;tracks[i].parent=-1;tracks[i].serial=++serial;tracks[i].born=clockTime;tracks[i].x=x;tracks[i].y=y;tracks[i].depth=depth;gActors[i].info.cullDistance=100000;return i;}
+float StarForge_RemixBirdSpeed(void*object,float original){int i;if(!Enabled()||!running)return original;for(i=0;i<60;i++)if(object==&gActors[i].obj&&tracks[i].used)return StarForge_RemixNativeSpeed(tracks[i].entry,original);return original;}
 static int SpawnWithDepth(int script,int mode,int lane,float x,float y,float depth){
     int i;ObjectInit init={0};
     for(i=0;i<60;i++)if(gActors[i].obj.status==OBJ_FREE)break;
@@ -93,7 +96,7 @@ static void Wave(void){
     for(j=0;j<e->count;j++){
         float offset=(j-(e->count-1)*0.5f)*e->gap,member[3];int shaped=StarForge_FormationOffset(wave,j,member);
         int original=StarForge_UsesOriginalMovement(wave);
-        slot=SpawnWithDepth(original?400+wave:e->script,e->mode,j,e->x+(shaped?member[0]:offset),e->y+(shaped?member[1]:0),e->depth+(shaped?member[2]:j*100));
+        slot=StarForge_RemixNativeId(wave)==235?SpawnNativeBird(wave,j,e->x+(shaped?member[0]:offset),e->y+(shaped?member[1]:0),e->depth+(shaped?member[2]:j*100)):SpawnWithDepth(original?400+wave:e->script,e->mode,j,e->x+(shaped?member[0]:offset),e->y+(shaped?member[1]:0),e->depth+(shaped?member[2]:j*100));
         if(slot>=0){tracks[slot].depth=e->depth+(shaped?member[2]:j*100);tracks[slot].speed=e->speed;tracks[slot].entry=wave;tracks[slot].nativeMovement=original;StarForge_RemixGroupBind(&gActors[slot].obj,wave,j);int guns,side=0,k,gun;guns=StarForge_CruiserGuns(wave,&side);for(k=0;k<guns;k++){gun=Spawn(145,6,k,0,0);if(gun>=0){tracks[gun].parent=slot;tracks[gun].parentSerial=tracks[slot].serial;tracks[gun].x=guns==5?side:0;}}int parentEntry=StarForge_ParentEntry(wave);if(parentEntry>=0){int parent;for(parent=0;parent<60;parent++)if(tracks[parent].used&&tracks[parent].entry==parentEntry){tracks[slot].parent=parent;tracks[slot].parentSerial=tracks[parent].serial;break;}}
             if(e->overrides){gActors[slot].health=e->hp;gActors[slot].info.bonus=e->points;}if(StarForge_IsDecorative(wave)){tracks[slot].shoot=0;gActors[slot].info.hitbox=LOAD_ASSET(gNoHitbox);gActors[slot].info.damage=0;gActors[slot].info.bonus=0;}}
     }
@@ -154,7 +157,7 @@ void CorneriaRemix_Update(void){
     }
     for(i=0;i<60;i++)if(tracks[i].used){
         CR_Track* t=&tracks[i];Actor* a=&gActors[i];
-        if(a->obj.status!=OBJ_ACTIVE){t->used=0;continue;}if(t->parent>=0&&(!tracks[t->parent].used||tracks[t->parent].serial!=t->parentSerial||gActors[t->parent].obj.status!=OBJ_ACTIVE)){Object_Kill(&a->obj,a->sfxSource);t->used=0;continue;}
+        if(a->obj.status==OBJ_INIT)continue;if(a->obj.status!=OBJ_ACTIVE){t->used=0;continue;}if(t->parent>=0&&(!tracks[t->parent].used||tracks[t->parent].serial!=t->parentSerial||gActors[t->parent].obj.status!=OBJ_ACTIVE)){Object_Kill(&a->obj,a->sfxSource);t->used=0;continue;}
         age=clockTime-t->born;age=StarForge_ReactAge(&a->obj,t->entry,age,a->obj.pos.z,gPathProgress);{int targetEntry=-1;float flightSpeed=1200,flightDuration=16;int behavior=StarForge_ReactiveInfo(t->entry,&targetEntry,&flightSpeed,&flightDuration);if(behavior){if(age>flightDuration){Object_Kill(&a->obj,a->sfxSource);t->used=0;continue;}Vec3f target={p->pos.x,p->pos.y,p->trueZpos};int found=behavior==2,k;if(behavior==1){for(k=0;k<60;k++)if(k!=i&&tracks[k].used&&tracks[k].entry==targetEntry&&gActors[k].obj.status==OBJ_ACTIVE){target=gActors[k].obj.pos;found=1;break;}if(!found&&targetEntry>=20000)for(k=0;k<ARRAY_COUNT(gScenery);k++)if(propEntries[k]==targetEntry-20000&&gScenery[k].obj.status==OBJ_ACTIVE){target=gScenery[k].obj.pos;found=1;break;}}if(found){float dx=target.x-a->obj.pos.x,dy=target.y-a->obj.pos.y,dz=target.z-a->obj.pos.z,length=sqrtf(dx*dx+dy*dy+dz*dz),step=flightSpeed*(gVIsPerFrame>0?gVIsPerFrame:2)/60.0f;if(length>.00001f){if(step>length)step=length;a->obj.pos.x+=dx/length*step;a->obj.pos.y+=dy/length*step;a->obj.pos.z+=dz/length*step;a->obj.rot.y=atan2f(dx,dz)*M_RTOD;a->obj.rot.x=-atan2f(dy,sqrtf(dx*dx+dz*dz))*M_RTOD;}}a->vel.x=a->vel.y=a->vel.z=0;StarForge_RemixTransform(t->mode==30?2:0,t->entry,&a->obj,&a->obj.rot.x);a->rot_0F4=a->obj.rot;continue;}}if(t->nativeMovement){if(age>120){Object_Kill(&a->obj,a->sfxSource);t->used=0;}else StarForge_RemixTransform(0,t->entry,&a->obj,&a->obj.rot.x);continue;}x=t->x;y=t->y;z=t->depth-age*t->speed;phase=age*1.4f+t->lane*0.785398f;
         switch(t->mode){
             case 0:x=t->x+300*sinf(age);break;

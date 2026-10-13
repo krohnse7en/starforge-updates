@@ -47,7 +47,7 @@ class TesterSetup : Form {
             "\nGame assets: " + (ArchiveValid(Path.Combine(gameDir, "sf64.o2r")) ? "ready" : "choose one of the two setup options below");
     }
     TesterSetup() {
-        Text = "StarForge v0.15.0 · Tester setup"; ClientSize = new Size(600, 460);
+        Text = "StarForge v" + System.Text.RegularExpressions.Regex.Match(File.ReadAllText(Path.Combine(root, "StarForge", "version.json")), @"\d+\.\d+\.\d+").Value + " · Tester setup"; ClientSize = new Size(600, 460);
         Font = new Font("Segoe UI", 10); FormBorderStyle = FormBorderStyle.FixedDialog; MaximizeBox = false;
         var icon = Path.Combine(root, "StarForge", "StarForge.ico"); if (File.Exists(icon)) Icon = new Icon(icon);
         Controls.Add(new Label { Text = "Welcome! Keep this extracted folder together.\nNo administrator rights or development tools are needed.", Left = 24, Top = 20, Width = 550, Height = 50 });

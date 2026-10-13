@@ -41,3 +41,12 @@ float StarForge_SceneryHeight(int entry,float fallback);
 }
 #endif
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+int StarForge_RemixNativeId(int entry);
+float StarForge_RemixNativeSpeed(int entry,float original);
+#ifdef __cplusplus
+}
+#endif
