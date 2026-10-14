@@ -1,6 +1,32 @@
 {
   "releases": [
     {
+      "version": "0.21.0",
+      "date": "2026-10-14",
+      "changes": [
+        "Drag the right edge of an enemy or teammate group clip to stretch or shorten every member’s flight. Entry spacing and flight times change together, with one Undo.",
+        "Group flight time controls are available in authored and original-stage Properties. Original routes become editable predicted paths when retimed.",
+        "Authored Flight time now changes movement instead of storing an unused value on original-script and formation enemies.",
+        "Approach speed is disabled when original movement, a timed path or a reactive behavior controls speed, with an explanation of the effective control."
+      ],
+      "sections": [
+        {
+          "title": "Feature Additions",
+          "changes": [
+            "Drag the right edge of an enemy or teammate group clip to stretch or shorten every member’s flight. Entry spacing and flight times change together, with one Undo.",
+            "Group flight time controls are available in authored and original-stage Properties. Original routes become editable predicted paths when retimed."
+          ]
+        },
+        {
+          "title": "Bugfixes",
+          "changes": [
+            "Authored Flight time now changes movement instead of storing an unused value on original-script and formation enemies.",
+            "Approach speed is disabled when original movement, a timed path or a reactive behavior controls speed, with an explanation of the effective control."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.20.1",
       "date": "2026-10-14",
       "changes": [
