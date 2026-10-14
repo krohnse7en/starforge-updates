@@ -1,6 +1,23 @@
 {
   "releases": [
     {
+      "version": "0.21.1",
+      "date": "2026-10-14",
+      "changes": [
+        "Dragging the duration edge of a selected flight clip now retimes every selected enemy/teammate clip and group, rather than changing only the clicked clip.",
+        "Selected groups keep their own start times while their member timing stretches together. All selected bars update during the drag, with one Undo and atomic cancellation."
+      ],
+      "sections": [
+        {
+          "title": "Bugfixes",
+          "changes": [
+            "Dragging the duration edge of a selected flight clip now retimes every selected enemy/teammate clip and group, rather than changing only the clicked clip.",
+            "Selected groups keep their own start times while their member timing stretches together. All selected bars update during the drag, with one Undo and atomic cancellation."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.21.0",
       "date": "2026-10-14",
       "changes": [

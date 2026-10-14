@@ -1,4 +1,4 @@
-# StarForge source · v0.21.0
+# StarForge source · v0.21.1
 
 StarForge is a Windows level editor for Starship. Original editor code is MIT licensed. Public tester downloads and the signed update feed remain in this repository's Releases and channels directories.
 
