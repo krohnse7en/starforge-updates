@@ -1,6 +1,23 @@
 {
   "releases": [
     {
+      "version": "0.20.1",
+      "date": "2026-10-14",
+      "changes": [
+        "Fixed timeline and workspace selections leaving text fields focused, which could stop Delete and other object shortcuts from working.",
+        "Scenery timeline bars now account for their forward placement distance, including distant ships. Selected scenery no longer remains visible outside the current preview distance window."
+      ],
+      "sections": [
+        {
+          "title": "Bugfixes",
+          "changes": [
+            "Fixed timeline and workspace selections leaving text fields focused, which could stop Delete and other object shortcuts from working.",
+            "Scenery timeline bars now account for their forward placement distance, including distant ships. Selected scenery no longer remains visible outside the current preview distance window."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.20.0",
       "date": "2026-10-14",
       "changes": [
