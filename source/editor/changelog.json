@@ -1,6 +1,23 @@
 {
   "releases": [
     {
+      "version": "0.19.2",
+      "date": "2026-10-13",
+      "changes": [
+        "Fixed Warp zone pillar 1 and 2 firing enemy lasers during playtests. Both are now passive solid scenery in authored and original-stage projects, including copied or custom-path placements.",
+        "Kept pillar hitboxes, contact damage, positioning, movement and actor-budget counts intact; normal enemies continue firing."
+      ],
+      "sections": [
+        {
+          "title": "Bugfixes",
+          "changes": [
+            "Fixed Warp zone pillar 1 and 2 firing enemy lasers during playtests. Both are now passive solid scenery in authored and original-stage projects, including copied or custom-path placements.",
+            "Kept pillar hitboxes, contact damage, positioning, movement and actor-budget counts intact; normal enemies continue firing."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.19.1",
       "date": "2026-10-13",
       "changes": [

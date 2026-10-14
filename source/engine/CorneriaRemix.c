@@ -204,7 +204,7 @@ void CorneriaRemix_Update(void){
         a->obj.pos.x=p->xPath+x;a->obj.pos.y=p->yPath+y;a->obj.pos.z=p->trueZpos-z;
         a->vel.x=a->vel.y=a->vel.z=0;
         a->obj.rot.x=0;a->obj.rot.y=0;a->obj.rot.z=t->mode==3?age*30:0;if(followsCustomPath&&StarForge_FacesPath(t->entry)){float orientation[3];if(StarForge_PathOrientation(t->entry,age,t->mode==30?0:t->lane,orientation)){a->obj.rot.x=orientation[0];a->obj.rot.y=orientation[1];a->obj.rot.z=orientation[2];}}StarForge_RemixTransform(t->mode==30?2:0,t->entry,&a->obj,&a->obj.rot.x);a->rot_0F4=a->obj.rot;
-        if(t->shoot&&t->mode!=4&&t->mode!=5&&a->eventType!=EVID_ME_METEOR_4&&a->eventType!=EVID_SPACE_MINE&&
+        if(t->shoot&&t->mode!=4&&t->mode!=5&&a->eventType!=EVID_ME_METEOR_4&&a->eventType!=EVID_SPACE_MINE&&a->eventType!=EVID_WZ_PILLAR_1&&a->eventType!=EVID_WZ_PILLAR_2&&
            ((gGameFrameCount+i*17)%110==0))a->work_048=EVACT_2;
     }
     clockTime+=(gVIsPerFrame>0?gVIsPerFrame:2)/60.0f;
