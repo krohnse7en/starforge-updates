@@ -30,12 +30,14 @@
      }
 --- a/src/engine/fox_enmy2.c
 +++ b/src/engine/fox_enmy2.c
-@@ -1853,6 +1853,11 @@
+@@ -1853,6 +1853,13 @@
  }
  
  void ActorEvent_ProcessActions(ActorEvent* this) {
-+    // Structural warp pillars are solid scenery, never weapon emitters.
-+    if ((this->eventType == EVID_WZ_PILLAR_1) || (this->eventType == EVID_WZ_PILLAR_2)) {
++    // Warp ruins are solid scenery, never weapon emitters.
++    if ((this->eventType == EVID_WZ_PILLAR_1) || (this->eventType == EVID_WZ_PILLAR_2) ||
++        (this->eventType == EVID_WZ_METEOR_1) || (this->eventType == EVID_WZ_METEOR_2) ||
++        (this->eventType == EVID_WZ_GATE)) {
 +        this->work_048 = EVACT_NONE;
 +        return;
 +    }

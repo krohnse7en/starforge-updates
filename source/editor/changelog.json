@@ -1,6 +1,30 @@
 {
   "releases": [
     {
+      "version": "0.20.0",
+      "date": "2026-10-14",
+      "changes": [
+        "Buried actor scenery is clipped to the visible flat land floor in Game and 3D previews, with interpolated textures. Side and Top views keep the full geometry visible for editing.",
+        "Extended passive warp scenery to gates and both meteor variants, which could receive unintended enemy weapon actions. Solid collision, movement and original visual effects remain intact.",
+        "Fixed the authored Venom floor preview using the fallback ground instead of its original floor texture."
+      ],
+      "sections": [
+        {
+          "title": "Feature Additions",
+          "changes": [
+            "Buried actor scenery is clipped to the visible flat land floor in Game and 3D previews, with interpolated textures. Side and Top views keep the full geometry visible for editing."
+          ]
+        },
+        {
+          "title": "Bugfixes",
+          "changes": [
+            "Extended passive warp scenery to gates and both meteor variants, which could receive unintended enemy weapon actions. Solid collision, movement and original visual effects remain intact.",
+            "Fixed the authored Venom floor preview using the fallback ground instead of its original floor texture."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.19.2",
       "date": "2026-10-13",
       "changes": [
