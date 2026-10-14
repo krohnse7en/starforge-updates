@@ -1,6 +1,41 @@
 {
   "releases": [
     {
+      "version": "0.19.1",
+      "date": "2026-10-13",
+      "changes": [
+        "Fixed playtest and project opening incorrectly rejecting supported native enemies such as Zoness cargo tankers as invalid birds. Native identity validation now checks the supported catalog and retains the legacy Zoness bird format.",
+        "Native bird speed is validated only when supplied; supported native enemies without bird-speed settings can playtest normally. Invalid speeds and mismatched native identities still produce clear errors.",
+        "Moved actor-based walls, pillars, warp gates, meteors, rocks and cargo into the Scenery library and timeline in both editors, retaining native gameplay behavior and actor-budget counts.",
+        "Added Scatter Random tilt / flip, off by default, to randomize all three rotation axes. Surface snapping and collision checks use the rotated model. Actor scenery also supports scattering.",
+        "Scatter controls now receive enough space when the row wraps, instead of being clipped by a tall timeline.",
+        "Cached native scenery category lookups to avoid scanning the enemy catalog for every object on every preview frame."
+      ],
+      "sections": [
+        {
+          "title": "Feature Additions",
+          "changes": [
+            "Moved actor-based walls, pillars, warp gates, meteors, rocks and cargo into the Scenery library and timeline in both editors, retaining native gameplay behavior and actor-budget counts.",
+            "Added Scatter Random tilt / flip, off by default, to randomize all three rotation axes. Surface snapping and collision checks use the rotated model. Actor scenery also supports scattering."
+          ]
+        },
+        {
+          "title": "Bugfixes",
+          "changes": [
+            "Fixed playtest and project opening incorrectly rejecting supported native enemies such as Zoness cargo tankers as invalid birds. Native identity validation now checks the supported catalog and retains the legacy Zoness bird format.",
+            "Native bird speed is validated only when supplied; supported native enemies without bird-speed settings can playtest normally. Invalid speeds and mismatched native identities still produce clear errors.",
+            "Scatter controls now receive enough space when the row wraps, instead of being clipped by a tall timeline."
+          ]
+        },
+        {
+          "title": "Optimizations",
+          "changes": [
+            "Cached native scenery category lookups to avoid scanning the enemy catalog for every object on every preview frame."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.19.0",
       "date": "2026-10-13",
       "sections": [
