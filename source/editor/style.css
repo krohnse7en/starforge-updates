@@ -45,3 +45,6 @@ canvas:focus{outline:none}
 #timeline .clip.partialSelection{outline:2px dashed #70e5be;outline-offset:-2px}
 
 #playhead{z-index:45!important;pointer-events:none}
+
+/* Keep the playhead above the ruler within the timeline, below editor menus. */
+#timeline{isolation:isolate}

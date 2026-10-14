@@ -1,6 +1,43 @@
 {
   "releases": [
     {
+      "version": "0.19.0",
+      "date": "2026-10-13",
+      "sections": [
+        {
+          "title": "Feature Additions",
+          "changes": [
+            "Added Paste Above (Ctrl+Alt+V) and Paste Below (Ctrl+Alt+Shift+V) for edge-to-edge model stacking, preserving copied timing, orientation and size.",
+            "Snap to grid now uses the visible floor grid for mouse dragging and arrow keys. Selected groups move together without changing their spacing."
+          ]
+        },
+        {
+          "title": "Bugfixes",
+          "changes": [
+            "Fixed scenery ignoring Up/Down arrow movement. All selected object types now move consistently across tools, including height changes in Side and 3D views.",
+            "Collision-protected native paste and scatter now include scenery skew in the existing-object bounds. Collision protection remains optional and off by default.",
+            "Kept the timeline playhead above the ruler while preventing it from drawing over editor menus."
+          ]
+        },
+        {
+          "title": "Interface and Documentation",
+          "changes": [
+            "Changelog entries are grouped by Feature Additions, Bugfixes, Optimizations and other relevant categories. The 0.18.0 GitHub notes were reorganized without changing its downloads.",
+            "Updated Help with stacking shortcuts, grid spacing, arrow directions and collision-protection behavior."
+          ]
+        }
+      ],
+      "changes": [
+        "Added Paste Above (Ctrl+Alt+V) and Paste Below (Ctrl+Alt+Shift+V) for edge-to-edge model stacking, preserving copied timing, orientation and size.",
+        "Snap to grid now uses the visible floor grid for mouse dragging and arrow keys. Selected groups move together without changing their spacing.",
+        "Fixed scenery ignoring Up/Down arrow movement. All selected object types now move consistently across tools, including height changes in Side and 3D views.",
+        "Collision-protected native paste and scatter now include scenery skew in the existing-object bounds. Collision protection remains optional and off by default.",
+        "Changelog entries are grouped by Feature Additions, Bugfixes, Optimizations and other relevant categories. The 0.18.0 GitHub notes were reorganized without changing its downloads.",
+        "Updated Help with stacking shortcuts, grid spacing, arrow directions and collision-protection behavior.",
+        "Kept the timeline playhead above the ruler while preventing it from drawing over editor menus."
+      ]
+    },
+    {
       "version": "0.18.0",
       "date": "2026-10-13",
       "changes": [
@@ -20,7 +57,7 @@
         "Removed Tester setup from the in-app Help manual. Installation instructions remain in the download package.",
         "Reorganized Properties into collapsible task sections while keeping the original Object Library cards and previews. Project menus now stack correctly, close each other, and share matching heights with the top-row controls.",
         "Floor-safe enemy insertion now checks the full predicted flight route and raises the initial spawn height enough for its lowest point, preserving route shape, timing and formation spacing.",
-        "Added Edit \u2192 Raise spawn above floor to apply the same check to an existing selected enemy or group.",
+        "Added Edit → Raise spawn above floor to apply the same check to an existing selected enemy or group.",
         "Help is organized into task-based sections; related selection, scatter and movement guidance is consolidated, and fix-specific notes are folded into troubleshooting.",
         "New enemies now default to Static side-to-side movement. Existing saved choices remain unchanged.",
         "Fixed the Project dropdown appearing behind the editing toolbar. New, Open, Save As and Open Path now stay fully visible.",
@@ -51,12 +88,81 @@
         "Opening an over-limit project jumps to its first overloaded frame. Playtest warns again, with an optional Do Not Show Again checkbox. Counts follow the preview; game-generated actors can need additional slots.",
         "Playtest checks item coordinates before launching. Rejected projects no longer silently switch to built-in remix enemies, and game load errors are shown in the editor.",
         "Single scenery clips and scattered copies show their library names instead of Scenery pair.",
-        "Older matching pairs show Name \u00d7 2; different pairs show both names. Properties and history use the same scenery names.",
+        "Older matching pairs show Name × 2; different pairs show both names. Properties and history use the same scenery names.",
         "Detours add local bends rather than shifting the whole path. The start and end stay fixed, and Undo restores the old route.",
         "Enemies, enemy groups and scenery can be selected and copied together. Edit has Copy and Paste buttons.",
         "Scatter checks nearby objects, other scattered items and later preview routes; a blocked batch adds nothing.",
         "Shuffle beside the project name creates another planet or zone name. Undo restores the previous name.",
         "Fixed secure GitHub update-feed connections on Windows."
+      ],
+      "sections": [
+        {
+          "title": "Feature Additions",
+          "changes": [
+            "Timeline dragging now moves every selected object together across enemies, allies, scenery, items and events, including selected members of expanded groups. Relative time spacing is preserved, boundaries stop the whole selection, and one Undo restores the move.",
+            "Added a Favorites tab to the Object Library. Stars toggle favorites on/off across object cards and group/formation families; favorites retain previews, Add controls, search and sorting, and are remembered locally across editor restarts.",
+            "Expanded the enemy library from 60 to 139 entries after auditing all game actor and event identifiers. Added native enemies and obstacles from across the campaign, including Fortuna radar, Titania mines/tanks/turrets/Rasco, Meteo Mora snakes, Macbeth rocks and Zoness cargo.",
+            "Native actors can be inserted in authored custom stages and original-stage projects with actual model previews and native playtest behavior. Stage names and alternate names are searchable.",
+            "Actor budgets include attached cargo, Delphor heads and Rasco rocks. Native shared-state reservations reset on playtest restart; unsupported dependent assemblies remain excluded.",
+            "Floor-safe enemy insertion now checks the full predicted flight route and raises the initial spawn height enough for its lowest point, preserving route shape, timing and formation spacing.",
+            "Added Edit → Raise spawn above floor to apply the same check to an existing selected enemy or group.",
+            "New enemies now default to Static side-to-side movement. Existing saved choices remain unchanged.",
+            "Top-level menus close each other when another opens. Click outside or press Escape to dismiss them.",
+            "Aligned the level name field, shuffle button, top-row menus and action buttons to the same height.",
+            "New enemy insertions in land rail stages are lifted above the preview floor or terrain when their model would extend below it. Groups retain their relative heights; space rail placement is unchanged.",
+            "Added Sway / Static in enemy Properties for authored Straight movement. Static removes lateral sway in both preview and playtest while retaining forward movement.",
+            "Added an explicit Face flight path checkbox for authored custom enemy paths, off by default, controlling orientation in preview and playtest.",
+            "Opening older, unchanged broken bird groups repairs identifiable original members. Save to keep the repair; moved generic markers may need re-adding.",
+            "Other unsupported stage-specific native actor groups are rejected clearly instead of inserting invalid Enemy markers.",
+            "Workspace wheel zoom and Zoom % now focus on the selected object, or the middle of multiple selected objects, in both editors.",
+            "Scatter has a Snap to surface checkbox, on by default. Turn it off for random floating heights; the choice is remembered.",
+            "Land floating scenery stays above the preview surface. Space floating scenery can sit below zero. Original campaign placement limits are -1,000 to 4,232 units; collision checks still apply.",
+            "After selecting an object, Ctrl+A selects the objects currently visible in the workspace, respecting filters and the preview frame.",
+            "Selection menu beside Display offers Select All, Select All Type, exact-asset Select Similar and Select Inverse, with keyboard shortcuts; all use the current visible frame.",
+            "Paste in Place (Ctrl+Shift+V) preserves copied positions, appearance times, rotation, size and paths, without offsets.",
+            "Optional Collision protection in Edit starts off. Pasted sets move to the nearest checked clear left/right position only, keeping height and forward/back coordinates; it also applies to Paste in Place.",
+            "Open Path beside Save As opens Windows File Explorer with the saved project selected. It stays disabled until a file location is known.",
+            "Active actor count is shown separately from rendered meshes. More than 60 simultaneous actors triggers an insertion warning with Undo or Ignore.",
+            "Opening an over-limit project jumps to its first overloaded frame. Playtest warns again, with an optional Do Not Show Again checkbox. Counts follow the preview; game-generated actors can need additional slots.",
+            "Enemies, enemy groups and scenery can be selected and copied together. Edit has Copy and Paste buttons.",
+            "Scatter checks nearby objects, other scattered items and later preview routes; a blocked batch adds nothing.",
+            "Shuffle beside the project name creates another planet or zone name. Undo restores the previous name."
+          ]
+        },
+        {
+          "title": "Bugfixes",
+          "changes": [
+            "Fixed the green timeline playhead appearing behind the sticky time ruler.",
+            "Fixed an extra Corneria stone arch being spawned by the built-in demo during custom-stage playtests. Custom projects now use only their authored scenery.",
+            "Titania native ground callbacks support other custom floors; fixed Rasco cleanup when its attached rocks cannot be allocated.",
+            "Removed the four-second delay before authored level events start in Starship. Timeline 0.0 seconds now begins when Fox becomes controllable; the opening cinematic remains unchanged.",
+            "Fixed the Project dropdown appearing behind the editing toolbar. New, Open, Save As and Open Path now stay fully visible.",
+            "Fixed authored Straight enemy preview missing the side-to-side sway already used in Starship, including Venom tanks. Workspace routes and placement collision checks now follow the same sway. Custom flight paths and Original movement retain their own behavior.",
+            "Fixed native Zoness bird groups appearing as generic red markers in authored missions. Animated models, native headings and speed parameters now carry into preview and playtesting.",
+            "All selected timeline clips now show their green outlines, matching the workspace selection.",
+            "Playtest checks item coordinates before launching. Rejected projects no longer silently switch to built-in remix enemies, and game load errors are shown in the editor.",
+            "Detours add local bends rather than shifting the whole path. The start and end stay fixed, and Undo restores the old route.",
+            "Fixed secure GitHub update-feed connections on Windows."
+          ]
+        },
+        {
+          "title": "Interface and Documentation",
+          "changes": [
+            "Group-header dragging preserves other selected clips. Plain clicks on selected clips keep the multi-selection; dragging an unselected clip starts a new selection. Right-edge flight-duration resizing remains individual.",
+            "Moved the stage/navigation information row above the Toolbox controls.",
+            "Help article headings are now larger than body text, with clearer spacing and no tiny all-caps styling.",
+            "Removed Tester setup from the in-app Help manual. Installation instructions remain in the download package.",
+            "Reorganized Properties into collapsible task sections while keeping the original Object Library cards and previews. Project menus now stack correctly, close each other, and share matching heights with the top-row controls.",
+            "Help is organized into task-based sections; related selection, scatter and movement guidance is consolidated, and fix-specific notes are folded into troubleshooting.",
+            "Restored the original Object Library cards with all previews visible and direct click-to-add, while keeping the organized Properties and other layout improvements.",
+            "Reorganized editor controls and added collapsible Properties sections while keeping tools and shortcuts available. The original full-preview Object Library was subsequently restored.",
+            "Short timeline clips keep their names and shorten them with an ellipsis. Hover to see the full name.",
+            "Help now has a Changelog button beside Check for updates. Every published update must include a matching changelog entry.",
+            "Editor source is published on GitHub under MIT. Generated game artwork, audio, levels, personal files and signing keys are excluded; developer setup imports local assets separately.",
+            "Single scenery clips and scattered copies show their library names instead of Scenery pair.",
+            "Older matching pairs show Name × 2; different pairs show both names. Properties and history use the same scenery names."
+          ]
+        }
       ]
     },
     {
@@ -97,7 +203,7 @@
       "changes": [
         "Reorganized Properties into collapsible task sections while keeping the original Object Library cards and previews. Project menus now stack correctly, close each other, and share matching heights with the top-row controls.",
         "Floor-safe enemy insertion now checks the full predicted flight route and raises the initial spawn height enough for its lowest point, preserving route shape, timing and formation spacing.",
-        "Added Edit \u2192 Raise spawn above floor to apply the same check to an existing selected enemy or group. ",
+        "Added Edit → Raise spawn above floor to apply the same check to an existing selected enemy or group. ",
         "Help is organized into task-based sections; related selection, scatter and movement guidance is consolidated, and fix-specific notes are folded into troubleshooting.",
         "New enemies now default to Static side-to-side movement. Existing saved choices remain unchanged."
       ]
@@ -164,7 +270,7 @@
       "date": "2026-10-13",
       "changes": [
         "Single scenery clips and scattered copies show their library names instead of Scenery pair.",
-        "Older matching pairs show Name \u00d7 2; different pairs show both names. Properties and history use the same scenery names."
+        "Older matching pairs show Name × 2; different pairs show both names. Properties and history use the same scenery names."
       ]
     },
     {
