@@ -316,7 +316,7 @@ const inspectorBeforeGroupProperties=inspector;inspector=function(){inspectorBef
 const refreshBeforeGroupSync=refresh;refresh=function(){EditorGroups.sync();refreshBeforeGroupSync();};
 const validateBeforeCombatGroups=validate;validate=function(doc){const result=validateBeforeCombatGroups(doc);if(doc.combatGroups)result.combatGroups=clone(doc.combatGroups);return result;};
 
-const remixGroupTimelineAdapter={object:id=>[...level.waves,...level.scenery,...(level.events??[]),...(level.items??[])].find(o=>o.id===id),selection:SelectionGroups,select:(ids,redraw=true)=>{SelectionGroups.ids=new Set(ids);const o=remixGroupTimelineAdapter.object(ids[0]);selected=o?{kind:remixKind(o),id:o.id}:null;if(redraw)refresh();},refresh:()=>refresh(),stash,start:o=>o.time,setStart:(o,t)=>o.time=Math.max(0,Math.min(remixDuration(),t)),scale:()=>remixTimelineWidth/remixDuration()};GroupTimeline.install(remixGroupTimelineAdapter);
+const remixGroupTimelineAdapter={object:id=>[...level.waves,...level.scenery,...(level.events??[]),...(level.items??[])].find(o=>o.id===id),selection:SelectionGroups,select:(ids,redraw=true)=>{SelectionGroups.ids=new Set(ids);const o=remixGroupTimelineAdapter.object(ids[0]);selected=o?{kind:remixKind(o),id:o.id}:null;if(redraw)refresh();},refresh:()=>refresh(),stash,start:o=>o.time,setStart:(o,t)=>o.time=Math.max(0,Math.min(remixDuration(),t)),minimum:()=>0,maximum:()=>remixDuration(),focus:o=>setTime(o.time),pause:()=>{playing=false;$('play').textContent='▶ Preview movement';},cancel:()=>history.pop(),scale:()=>remixTimelineWidth/remixDuration()};GroupTimeline.install(remixGroupTimelineAdapter);
 
 WorkspaceMarquee.install(canvas,{selection:SelectionGroups,pathActive:()=>!!pathDrawing,hits:()=>hit,id:h=>h.id,hit:(x,y)=>{const h=WorkspacePicking.pick(hit,x,y,h=>h.id,selected?.id);return h&&h.d<18;},select:ids=>remixGroupTimelineAdapter.select(ids)});
 
@@ -407,3 +407,5 @@ remixFloorAdapter.routes=function*(members){for(const o of members){const saved=
 EnemyFloorPlacement.installButton(remixFloorAdapter,remixShortcutMembers,stash,refresh,status);
 
 remixFloorAdapter.defaultNew=o=>{if(o.sideToSide===undefined)o.sideToSide='static';};
+
+const paletteBeforeFavorites=palette;const remixFavoriteAdapter={tabs:document.querySelector('.library .tabs'),controls:enemyKindControls,context:()=>({category:tab,kind:enemyKind}),enter:c=>{tab=c.category;enemyKind=c.kind??'flying';},hideControls:()=>{enemyKindControls.style.display='none';},redraw:()=>palette()};palette=function(){LibraryFavorites.draw(paletteBeforeFavorites);};LibraryFavorites.install(remixFavoriteAdapter);

@@ -152,7 +152,7 @@ void CorneriaRemix_Update(void){
     if(sceneryBeat<settingCount&&clockTime>=settingsSequence[sceneryBeat].time){
         const CR_Setting* s=&settingsSequence[sceneryBeat];
         Prop(s->left,s->xLeft,s->yawLeft,sceneryBeat);Prop(s->right,s->xRight,s->yawRight,sceneryBeat);
-        if(gCurrentLevel==LEVEL_CORNERIA&&sceneryBeat==7)Prop(OBJ_SCENERY_CO_STONE_ARCH,0,0,-1);
+        if(settingsSequence==settings&&gCurrentLevel==LEVEL_CORNERIA&&sceneryBeat==7)Prop(OBJ_SCENERY_CO_STONE_ARCH,0,0,-1);
         sceneryBeat++;
     }
     for(i=0;i<60;i++)if(tracks[i].used){

@@ -43,3 +43,5 @@ canvas:focus{outline:none}
 
 #selectionMenu{position:relative}#selectionMenu .toolbarMenuPanel{min-width:255px}#selectionMenu .selectionTypes{border:1px solid #344255;border-radius:5px;padding:7px}#selectionMenu .selectionTypes summary{cursor:pointer;padding:3px}#selectionMenu .selectionTypes button{display:block;width:100%;text-align:left;margin-top:5px}
 #timeline .clip.partialSelection{outline:2px dashed #70e5be;outline-offset:-2px}
+
+#playhead{z-index:45!important;pointer-events:none}
