@@ -1,6 +1,16 @@
 {
   "releases": [
     {
+      "version": "0.17.0",
+      "date": "2026-10-13",
+      "changes": [
+        "Expanded the enemy library from 60 to 139 entries after auditing all game actor and event identifiers. Added native enemies and obstacles from across the campaign, including Fortuna radar, Titania mines/tanks/turrets/Rasco, Meteo Mora snakes, Macbeth rocks and Zoness cargo.",
+        "Native actors can be inserted in authored custom stages and original-stage projects with actual model previews and native playtest behavior. Stage names and alternate names are searchable.",
+        "Actor budgets include attached cargo, Delphor heads and Rasco rocks. Native shared-state reservations reset on playtest restart; unsupported dependent assemblies remain excluded.",
+        "Titania native ground callbacks support other custom floors; fixed Rasco cleanup when its attached rocks cannot be allocated."
+      ]
+    },
+    {
       "version": "0.16.4",
       "date": "2026-10-13",
       "changes": [

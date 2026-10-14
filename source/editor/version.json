@@ -1,5 +1,5 @@
 {
-  "version": "0.16.4",
+  "version": "0.17.0",
   "date": "2026-10-13",
   "policy": "Bump patch for each delivered fix or small change; bump minor for substantial features while below1.0. Major1.0 requires stable release readiness."
 }
