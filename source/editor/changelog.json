@@ -1,6 +1,23 @@
 {
   "releases": [
     {
+      "version": "0.21.2",
+      "date": "2026-10-14",
+      "title": "Static scenery throughout the editor and playtests",
+      "changes": [],
+      "sections": [
+        {
+          "title": "Bugfixes",
+          "changes": [
+            "All scenery stays fixed in the world, including warp pillars, gates, walls, rocks, debris, cargo and decorative ships. Native movement and AI no longer change their placement or orientation in Starship.",
+            "Scenery movement scripts, flight paths, sway and reactive settings are removed automatically. Properties keeps placement, grouping and transforms, without misleading movement controls.",
+            "Existing scenery placements keep their timing, position, size, rotation, skew and buried placement. Solid collision shapes and actor-slot accounting are retained. Enemies and teammates keep their movement.",
+            "Static native tanker cargo follows its parent placement and stays stationary. Scenery still leaves the scene after Fox passes it."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.21.1",
       "date": "2026-10-14",
       "changes": [

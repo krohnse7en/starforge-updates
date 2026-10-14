@@ -30,7 +30,17 @@
      }
 --- a/src/engine/fox_enmy2.c
 +++ b/src/engine/fox_enmy2.c
-@@ -1853,6 +1853,13 @@
+@@ -1123,7 +1123,8 @@
+     }
+     extern uint16_t* CorneriaRemix_Script(int script);
+     extern unsigned short* StarForge_NativeScript(int level,int script);
+-    actorScript = CorneriaRemix_Script(this->aiType);
++    actorScript = StarForge_StaticScript(&this->obj);
++    if(actorScript==NULL)actorScript = CorneriaRemix_Script(this->aiType);
+     if(actorScript==NULL)actorScript=StarForge_NativeScript(gCurrentLevel,this->aiType);
+     if (actorScript == NULL) {
+         /* Authored/reserved scripts must resolve through their own loaders.
+@@ -1853,6 +1854,13 @@
  }
  
  void ActorEvent_ProcessActions(ActorEvent* this) {
@@ -44,3 +54,78 @@
      s32 i;
      Vec3f sp78;
      Vec3f sp6C;
+--- a/src/engine/fox_enmy.c
++++ b/src/engine/fox_enmy.c
+@@ -159,6 +159,7 @@
+ }
+ 
+ void Scenery_Initialize(Scenery* this) {
++    StarForge_StaticForget(&this->obj);
+     s32 i;
+     u8* ptr = (u8*) this;
+ 
+@@ -177,6 +178,7 @@
+ }
+ 
+ void Actor_Initialize(Actor* this) {
++    StarForge_StaticForget(&this->obj);
+     s32 i;
+     u8* ptr = (u8*) this;
+ 
+@@ -2709,6 +2711,7 @@
+ }
+ 
+ void Actor_Move(Actor* this) {
++    if(StarForge_StaticApply(&this->obj,&this->obj.pos.x,&this->obj.rot.x)){this->vel.x=this->vel.y=this->vel.z=0;this->rot_0F4=this->obj.rot;return;}
+     float mount[3],mountRoll;Actor* mountParent=(Actor*)StarForge_NativeAttachment(&this->obj,mount,&mountRoll);
+     if(mountParent){Vec3f local={mount[0],mount[1],mount[2]},offset;if(mountParent==this||mountParent->obj.status==OBJ_FREE){Object_Kill(&this->obj,this->sfxSource);return;}Matrix_RotateY(gCalcMatrix,mountParent->obj.rot.y*M_DTOR,MTXF_NEW);Matrix_RotateX(gCalcMatrix,mountParent->obj.rot.x*M_DTOR,MTXF_APPLY);Matrix_RotateZ(gCalcMatrix,mountParent->obj.rot.z*M_DTOR,MTXF_APPLY);Matrix_MultVec3fNoTranslate(gCalcMatrix,&local,&offset);this->obj.pos.x=mountParent->obj.pos.x+offset.x;this->obj.pos.y=mountParent->obj.pos.y+offset.y;this->obj.pos.z=mountParent->obj.pos.z+offset.z;this->vwork[29]=mountParent->obj.rot;this->obj.rot.z=mountRoll;this->vel.x=this->vel.y=this->vel.z=0;return;}
+ 
+@@ -2919,6 +2922,21 @@
+             CALL_CANCELLABLE_EVENT(ObjectInitEvent, OBJECT_TYPE_ACTOR, this) {
+                 this->obj.status = OBJ_ACTIVE;
+                 Object_Init(this->index, this->obj.id);
++                if(StarForge_IsStatic(&this->obj)){
++                    Vec3f nativePos=this->obj.pos;
++                    StarForge_StaticApply(&this->obj,&this->obj.pos.x,&this->obj.rot.x);
++                    if(this->obj.id==OBJ_ACTOR_ZO_TANKER){
++                        for(int k=0;k<ARRAY_COUNT(gActors);k++){Actor* child=&gActors[k];
++                            if(child!=this&&child->obj.status==OBJ_INIT&&(child->obj.id==OBJ_ACTOR_ZO_CONTAINER||child->obj.id==OBJ_ACTOR_ZO_SUPPLYCRANE)&&child->iwork[1]==this->index){
++                                Vec3f local={child->obj.pos.x-nativePos.x,child->obj.pos.y-nativePos.y,child->obj.pos.z-nativePos.z},offset;
++                                Matrix_RotateY(gCalcMatrix,-child->obj.rot.y*M_DTOR,MTXF_NEW);Matrix_MultVec3fNoTranslate(gCalcMatrix,&local,&offset);local=offset;
++                                Matrix_RotateZ(gCalcMatrix,this->obj.rot.z*M_DTOR,MTXF_NEW);Matrix_RotateY(gCalcMatrix,this->obj.rot.y*M_DTOR,MTXF_APPLY);Matrix_RotateX(gCalcMatrix,this->obj.rot.x*M_DTOR,MTXF_APPLY);Matrix_MultVec3fNoTranslate(gCalcMatrix,&local,&offset);
++                                child->obj.pos.x=this->obj.pos.x+offset.x;child->obj.pos.y=this->obj.pos.y+offset.y;child->obj.pos.z=this->obj.pos.z+offset.z;child->obj.rot=this->obj.rot;
++                                StarForge_StaticBind(&child->obj,&child->obj.pos.x,&child->obj.rot.x);
++                            }
++                        }
++                    }
++                }
+                 if (this->obj.id != OBJ_ACTOR_ZO_RADARBUOY) {
+                     Actor_Move(this);
+                 }
+@@ -2928,6 +2946,10 @@
+ 
+         case OBJ_ACTIVE: {
+             CALL_CANCELLABLE_EVENT(ObjectUpdateEvent, OBJECT_TYPE_ACTOR, this) {
++                if(StarForge_IsStatic(&this->obj)){
++                    if(this->obj.id==OBJ_ACTOR_EVENT&&this->eventType==EVID_FFF){extern void ActorEvent_ProcessScript(ActorEvent*);ActorEvent_ProcessScript(this);}
++                    StarForge_StaticApply(&this->obj,&this->obj.pos.x,&this->obj.rot.x);this->rot_0F4=this->obj.rot;this->vel.x=this->vel.y=this->vel.z=0;this->work_048=EVACT_NONE;if(this->obj.pos.z+gPathProgress>1500){Object_Kill(&this->obj,this->sfxSource);break;}if(this->eventType>=EVID_WZ_PILLAR_1&&this->eventType<=EVID_WZ_GATE)this->fwork[15]=this->fwork[16]=this->fwork[17]=255;break;
++                }
+                 Actor_Move(this);
+                 if ((this->obj.status != OBJ_FREE) && (this->info.action != NULL)) {
+                     this->info.action(&this->obj);
+@@ -3014,13 +3036,14 @@
+             CALL_CANCELLABLE_EVENT(ObjectInitEvent, OBJECT_TYPE_SCENERY, this) {
+                 this->obj.status = OBJ_ACTIVE;
+                 Object_Init(this->index, this->obj.id);
+-                Scenery_Move(this);
++                StarForge_StaticApply(&this->obj,&this->obj.pos.x,&this->obj.rot.x);Scenery_Move(this);
+             }
+             break;
+         }
+ 
+         case OBJ_ACTIVE: {
+             CALL_CANCELLABLE_EVENT(ObjectUpdateEvent, OBJECT_TYPE_SCENERY, this) {
++                if(StarForge_StaticApply(&this->obj,&this->obj.pos.x,&this->obj.rot.x)){this->vel.x=this->vel.y=this->vel.z=0;Scenery_Move(this);break;}
+                 Scenery_Move(this);
+                 if (this->info.action != NULL) {
+                     this->info.action(&this->obj);

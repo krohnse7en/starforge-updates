@@ -1,4 +1,5 @@
 #include "StarForgeRuntime.h"
+#include "StarForgeNative.h"
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include <vector>
@@ -122,14 +123,14 @@ extern "C" int StarForge_RemixSkew(void* object,float* shear){auto it=remixSkews
 extern "C" int StarForge_FormationOffset(int entry,int lane,float* point){try{auto& offsets=project.at("waves").at(entry).at("formationOffsets");if(lane<0||lane>=offsets.size())return 0;auto& p=offsets[lane];point[0]=p.at("x");point[1]=p.at("y");point[2]=p.at("z");return 1;}catch(...){return 0;}}
 
 extern "C" unsigned short* StarForge_OriginalEnemyScript(int script){auto aux=originalAuxScripts.find(script);if(aux!=originalAuxScripts.end())return aux->second.data();int entry=script-400;return entry>=0&&entry<originalEnemyScripts.size()&&!originalEnemyScripts[entry].empty()?originalEnemyScripts[entry].data():nullptr;}
-extern "C" int StarForge_UsesOriginalMovement(int entry){return entry>=0&&entry<originalEnemyScripts.size()&&!originalEnemyScripts[entry].empty()&&!project["waves"][entry].contains("flightBehavior")&&(!project["waves"][entry].contains("path")||project["waves"][entry]["path"].size()<2);}
+extern "C" int StarForge_UsesOriginalMovement(int entry){return !StarForge_RemixStatic(entry)&& entry>=0&&entry<originalEnemyScripts.size()&&!originalEnemyScripts[entry].empty()&&!project["waves"][entry].contains("flightBehavior")&&(!project["waves"][entry].contains("path")||project["waves"][entry]["path"].size()<2);}
 
 extern "C" float StarForge_ClipDuration(int entry){try{return project.at("waves").at(entry).value("clipDuration",32.0f);}catch(...){return 32;}}
 
 extern "C" float StarForge_SceneryDepth(int entry){try{return project.at("scenery").at(entry).value("depth",10000.0f);}catch(...){return 10000.0f;}}
 extern "C" float StarForge_SceneryHeight(int entry,float fallback){try{return project.at("scenery").at(entry).value("y",fallback);}catch(...){return fallback;}}
 
-extern "C" void StarForge_OriginalSpawnRotation(int entry,float* rotation){try{auto& r=project.at("waves").at(entry).at("nativeSpawnRotation");for(int i=0;i<3;i++)rotation[i]=r.at(i).get<float>();}catch(...){}}
+extern "C" void StarForge_OriginalSpawnRotation(int entry,float* rotation){try{if(StarForge_RemixStatic(entry)&&!project.at("waves").at(entry).contains("nativeMovement"))return;auto& r=project.at("waves").at(entry).at("nativeSpawnRotation");for(int i=0;i<3;i++)rotation[i]=r.at(i).get<float>();}catch(...){}}
 
 extern "C" float StarForge_SectionDuration(void){return sectionDuration;}
 
@@ -167,3 +168,5 @@ extern "C" int StarForge_RemixNativeId(int entry){try{return project.at("waves")
 extern "C" float StarForge_RemixNativeSpeed(int entry,float original){try{return project.at("waves").at(entry).at("nativeObject").at("parameters").value("birdSpeed",original);}catch(...){return original;}}
 
 extern "C" int StarForge_SwayEnabled(int entry){try{return project.at("waves").at(entry).value("sideToSide",std::string("sway"))!="static";}catch(...){return 1;}}
+
+extern "C" int StarForge_RemixStatic(int entry){try{auto& o=project.at("waves").at(entry);int type=o.contains("nativeObject")?o["nativeObject"].value("id",-1):o.value("script",0)==142?61:o.value("script",0)-200;return o.value("staticScenery",false)||o.value("decorative",false)||StarForge_StaticActorType(type);}catch(...){return 0;}}

@@ -4,6 +4,14 @@
 extern "C" {
 #endif
 void StarForge_NativeLoad(void);
+int StarForge_StaticActorType(int type);
+void StarForge_StaticForget(void* object);
+void StarForge_StaticReset(void);
+void StarForge_StaticBind(void* object,const float* position,const float* rotation);
+int StarForge_IsStatic(void* object);
+int StarForge_StaticApply(void* object,float* position,float* rotation);
+int StarForge_RemixStatic(int entry);
+unsigned short* StarForge_StaticScript(void* object);
 void StarForge_NativeReactDamage(void* object);
 void* StarForge_NativeAttachment(void* object,float* offset,float* roll);
 void StarForge_PresentationReload(void);
