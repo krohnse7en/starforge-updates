@@ -118,7 +118,7 @@ static void Prop(int id,float x,float yaw,int entry){
     Scenery_Load(&gScenery[i],&init);propEntries[i]=entry;StarForge_RemixTransform(1,entry,&gScenery[i].obj,&gScenery[i].obj.rot.x);
 }
 void CorneriaRemix_Reset(void){
-    running=finale=0;clockTime=-4;wave=sceneryBeat=serial=0;
+    running=finale=0;clockTime=0;wave=sceneryBeat=serial=0;
     memset(tracks,0,sizeof(tracks));memset(waveSpawned,0,sizeof(waveSpawned));memset(propEntries,-1,sizeof(propEntries));
     sequence=encounters;encounterCount=ARRAY_COUNT(encounters);
     settingsSequence=settings;settingCount=ARRAY_COUNT(settings);
@@ -131,7 +131,7 @@ void CorneriaRemix_PreUpdate(void){
     if(gPlayer[0].state==PLAYERSTATE_LEVEL_INTRO){running=finale=0;return;}
     if(gPlayer[0].state!=PLAYERSTATE_ACTIVE||finale)return;
     if(!running){
-        running=1;clockTime=-4;wave=sceneryBeat=serial=0;memset(tracks,0,sizeof(tracks));
+        running=1;clockTime=0;wave=sceneryBeat=serial=0;memset(tracks,0,sizeof(tracks));
         memset(waveSpawned,0,sizeof(waveSpawned));StarForge_Load();int n;const CR_Encounter* edited=StarForge_Waves(&n);
         sequence=edited?edited:encounters;encounterCount=edited?n:ARRAY_COUNT(encounters);
         const CR_Setting* editedSettings=StarForge_Scenery(&n);

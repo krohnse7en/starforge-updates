@@ -1,6 +1,20 @@
 {
   "releases": [
     {
+      "version": "0.16.4",
+      "date": "2026-10-13",
+      "changes": [
+        "Removed the four-second delay before authored level events start in Starship. Timeline 0.0 seconds now begins when Fox becomes controllable; the opening cinematic remains unchanged."
+      ]
+    },
+    {
+      "version": "0.16.4",
+      "date": "2026-10-13",
+      "changes": [
+        "Removed the four-second delay before authored level events start in Starship. Timeline 0.0 seconds now begins when Fox becomes controllable; the opening cinematic remains unchanged."
+      ]
+    },
+    {
       "version": "0.16.3",
       "date": "2026-10-13",
       "changes": [
