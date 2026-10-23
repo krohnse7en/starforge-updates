@@ -4,6 +4,7 @@
 extern "C" {
 #endif
 void StarForge_NativeLoad(void);
+int StarForge_NativeEncounterFire(void* object,int frame);
 int StarForge_StaticActorType(int type);
 void StarForge_StaticForget(void* object);
 void StarForge_StaticReset(void);
@@ -37,6 +38,17 @@ float* StarForge_NativeHitbox(void* object,float* original);
 int StarForge_NativeMusicSequence(int level,int sequence);
 int StarForge_NativeMusicActive(int level);
 void StarForge_SetMessageVoice(unsigned short* message,int voice);
+#ifdef __cplusplus
+}
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+int StarForge_PlaytestStartFrames(int level);
+int StarForge_PlaytestWarming(void);
+void StarForge_SetPlaytestWarming(int active);
+void StarForge_PlaytestWarmupReport(int success,int frames);
 #ifdef __cplusplus
 }
 #endif

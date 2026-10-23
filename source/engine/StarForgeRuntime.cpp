@@ -1,5 +1,6 @@
 #include "StarForgeRuntime.h"
 #include "StarForgeNative.h"
+#include "StarForgeFlightTiming.h"
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include <vector>
@@ -17,6 +18,8 @@ static std::vector<CR_Setting> scenery;
 static std::vector<std::string> names;
 static nlohmann::json project;
 static float sectionDuration=150;
+static std::map<std::pair<int,int>,StarForgeFlight::Timing> pathTimingCache;
+static std::map<int,StarForgeFlight::Actions> encounterActionCache;
 static bool pathProgressReady=false;static float pathProgress=0,pathProgressOrigin=0;
 static std::unordered_map<void*,float> remixScales;
 static std::unordered_map<void*,std::array<float,3>> remixSkews;
@@ -53,7 +56,7 @@ extern "C" void StarForge_EnvironmentLoad(int enabled){
 }
 extern "C" int StarForge_EnvironmentActive(void){return environmentFloor>=0&&environmentBackdrop>=0;}
 extern "C" int StarForge_EnvironmentLevel(int fallback,int backdrop,int enabled){return enabled&&StarForge_EnvironmentActive()?(backdrop?environmentBackdrop:environmentFloor):fallback;}
-extern "C" void StarForge_Load(void){pathProgressReady=false;remixScales.clear();remixSkews.clear();
+extern "C" void StarForge_Load(void){encounterActionCache.clear();pathTimingCache.clear();pathProgressReady=false;remixScales.clear();remixSkews.clear();
  waves.clear();scenery.clear();names.clear();originalEnemyScripts.clear();originalAuxScripts.clear();originalScopeTargets.clear();originalScriptScope.clear();project=json::object();sectionDuration=150;
  try{
   std::ifstream file("StarForge/project.json");if(!file)throw std::runtime_error("Project file missing");
@@ -83,19 +86,22 @@ extern "C" void StarForge_Load(void){pathProgressReady=false;remixScales.clear()
    if(e.contains("ship"))Number(e,"ship",1,5);
   }
   for(auto& p:project["items"]){Number(p,"time",0,sectionDuration);Number(p,"x",-32768,32767);Number(p,"y",50,1600);Number(p,"z",1000,12000);int id=p.at("item").get<int>();if(id!=322&&id!=323&&id!=324&&id!=327&&id!=335&&id!=336&&id!=337)throw std::runtime_error("item type");}
-  for(const char* list:{"waves","events"})for(auto& o:project[list])if(o.contains("path")){if(!o["path"].is_array()||o["path"].size()>4096)throw std::runtime_error("path count");for(auto& p:o["path"]){Number(p,"x",-1000000,1000000);Number(p,"y",-1000000,1000000);Number(p,"z",-1000000,1000000);}}
+  for(const char* list:{"waves","events"})for(auto& o:project[list])if(o.contains("path")){if(!o["path"].is_array()||o["path"].size()>4096)throw std::runtime_error("path count");for(auto& p:o["path"]){Number(p,"x",-1000000,1000000);Number(p,"y",-1000000,1000000);Number(p,"z",-1000000,1000000);}StarForgeFlight::Clock(0,std::max(.1f,o.value("duration",8.0f)),o["path"].size(),StarForgeFlight::Parse(o.value("pathTiming",json()),o["path"].size()));if(o.contains("pathTiming")&&o.contains("memberPaths"))for(const auto& member:o["memberPaths"])StarForgeFlight::Clock(0,std::max(.1f,o.value("duration",8.0f)),member.size(),StarForgeFlight::Parse(o["pathTiming"],member.size()));}
   for(auto& w:project["waves"])if(w.contains("memberPaths")){auto& paths=w["memberPaths"];if(!paths.is_array()||paths.size()!=w.at("count").get<int>())throw std::runtime_error("member path count");for(auto& nodes:paths){if(!nodes.is_array()||nodes.size()<2||nodes.size()>4096)throw std::runtime_error("member path points");for(auto& p:nodes){Number(p,"x",-1000000,1000000);Number(p,"y",-1000000,1000000);Number(p,"z",-1000000,1000000);}}}
+  for(const char* list:{"waves","events"})for(auto& o:project[list])if(o.contains("encounterActions"))StarForgeFlight::ParseActions(o["encounterActions"],o.value("duration",8.0f));
   eventDone.assign(project["events"].size(),false);itemDone.assign(project["items"].size(),false);triggerOrigin.assign(eventDone.size(),-1);customMessages.clear();customMessages.resize(eventDone.size());
   std::ofstream("StarForge/load-status.txt")<<"Project loaded: "<<waves.size()<<" waves, "<<scenery.size()<<" scenery pairs.\n";
  }catch(const std::exception& e){waves.clear();scenery.clear();names.clear();originalEnemyScripts.clear();originalAuxScripts.clear();originalScopeTargets.clear();originalScriptScope.clear();project=json::object();sectionDuration=150;project["schema"]="starforge.level.v1";std::ofstream("StarForge/load-status.txt")<<"Project rejected: "<<e.what()<<". Playtest stopped; return to the editor and fix the project.\n";}
 }
 extern "C" const CR_Encounter* StarForge_Waves(int* count){*count=waves.size();static const CR_Encounter empty={};return waves.empty()?(project.contains("schema")?&empty:nullptr):waves.data();}
 extern "C" const CR_Setting* StarForge_Scenery(int* count){*count=scenery.size();static const CR_Setting empty={};return scenery.empty()?(project.contains("schema")?&empty:nullptr):scenery.data();}
+static void SampleRemixPath(const json& nodes,float u,float* point){float t=std::max(0.0f,std::min(1.0f,u))*(nodes.size()-1);int n=std::min((int)t,(int)nodes.size()-2);float f=t-n;const char* keys[]={"x","y","z"};for(int k=0;k<3;k++){float p0=nodes[std::max(0,n-1)].at(keys[k]).get<float>(),p1=nodes[n].at(keys[k]).get<float>(),p2=nodes[n+1].at(keys[k]).get<float>(),p3=nodes[std::min((int)nodes.size()-1,n+2)].at(keys[k]).get<float>();point[k]=.5f*(2*p1+(-p0+p2)*f+(2*p0-5*p1+4*p2-p3)*f*f+(-p0+3*p1-3*p2+p3)*f*f*f);}}
+extern "C" int StarForge_EncounterFire(int entry,float age,float step){try{auto it=encounterActionCache.find(entry);if(it==encounterActionCache.end()){auto& o=entry>=10000?project.at("events").at(entry-10000):project.at("waves").at(entry);it=encounterActionCache.emplace(entry,StarForgeFlight::ParseActions(o.value("encounterActions",json()),o.value("duration",8.0f))).first;}return StarForgeFlight::Fire(it->second,age,age-std::max(.0001f,step));}catch(...){return 0;}}
 extern "C" int StarForge_Path(int entry,float age,int lane,float* point){
  try{const json* o=nullptr;if(entry>=10000)o=&project.at("events").at(entry-10000);else o=&project.at("waves").at(entry);
- if(!o->contains("path")||(*o)["path"].size()<2)return 0;auto& nodes=(o->contains("memberPaths")&&lane>=0&&lane<(*o)["memberPaths"].size())?(*o)["memberPaths"][lane]:(*o)["path"];float duration=o->value("duration",8.0f),t=std::max(0.0f,std::min(1.0f,age/std::max(0.1f,duration)))*(nodes.size()-1);int n=std::min((int)t,(int)nodes.size()-2);float f=t-n;
- const char* keys[]={"x","y","z"};for(int k=0;k<3;k++){float p0=nodes[std::max(0,n-1)].at(keys[k]).get<float>(),p1=nodes[n].at(keys[k]).get<float>(),p2=nodes[n+1].at(keys[k]).get<float>(),p3=nodes[std::min((int)nodes.size()-1,n+2)].at(keys[k]).get<float>();point[k]=.5f*(2*p1+(-p0+p2)*f+(2*p0-5*p1+4*p2-p3)*f*f+(-p0+3*p1-3*p2+p3)*f*f*f);}
- if(o->contains("flightBehavior")&&(*o)["flightBehavior"].value("type",std::string())=="react")point[2]+=o->value("time",0.0f)*1200-(pathProgress-pathProgressOrigin);else if(o->contains("pathFrameLock"))point[2]+=(*o)["pathFrameLock"].value("distance",0.0f)-(pathProgress-pathProgressOrigin);if(!o->contains("memberPaths"))point[0]+=lane*o->value("gap",230.0f);return age>duration?2:1;
+ if(!o->contains("path")||(*o)["path"].size()<2)return 0;auto& nodes=(o->contains("memberPaths")&&lane>=0&&lane<(*o)["memberPaths"].size())?(*o)["memberPaths"][lane]:(*o)["path"];float duration=std::max(0.1f,o->value("duration",8.0f));auto key=std::make_pair(entry,o->contains("memberPaths")?lane:0);auto cached=pathTimingCache.find(key);if(cached==pathTimingCache.end())cached=pathTimingCache.emplace(key,StarForgeFlight::Parse(o->value("pathTiming",json()),nodes.size())).first;const auto& timing=cached->second;auto clock=StarForgeFlight::Clock(age,duration,nodes.size(),timing);
+ SampleRemixPath(nodes,clock.u,point);
+ if(o->contains("flightBehavior")&&(*o)["flightBehavior"].value("type",std::string())=="react")point[2]+=o->value("time",0.0f)*1200-(pathProgress-pathProgressOrigin);else if(timing.enabled)point[2]+=o->value("time",0.0f)*1200-(pathProgress-pathProgressOrigin);else if(o->contains("pathFrameLock"))point[2]+=(*o)["pathFrameLock"].value("distance",0.0f)-(pathProgress-pathProgressOrigin);if(!o->contains("memberPaths"))point[0]+=lane*o->value("gap",230.0f);return clock.ended?(timing.hold?(point[2]<-1500?2:1):2):1;
  }catch(...){return 0;}}
 extern "C" int StarForge_WaveReady(int entry){try{std::string id=project.at("waves").at(entry).at("id");for(size_t i=0;i<eventDone.size();i++){auto&e=project["events"][i];if(e.value("type","")=="trigger"&&e.value("targetWave","")==id)return eventDone[i];}}catch(...){}return 1;}
 extern "C" void StarForge_Update(float time,float x,float y,float progress){pathProgress=progress;if(!pathProgressReady){pathProgressOrigin=progress-time*1200;pathProgressReady=true;}
@@ -139,7 +145,7 @@ extern "C" int StarForge_FacesPath(int entry){try{if(entry>=10000){auto& o=proje
 
 extern "C" int StarForge_ParentEntry(int entry){try{std::string id=project.at("waves").at(entry).value("parentId",std::string());if(id.empty())return -1;for(size_t i=0;i<project["waves"].size();i++)if(project["waves"][i].value("id",std::string())==id)return (int)i;}catch(...){}return -1;}
 
-extern "C" int StarForge_PathOrientation(int entry,float age,int lane,float* rotation){try{auto& o=entry>=10000?project.at("events").at(entry-10000):project.at("waves").at(entry);float duration=o.value("duration",8.0f),t=std::max(0.0f,std::min(age,duration-.01f)),p[3],q[3];if(StarForge_Path(entry,t,lane,p)!=1||StarForge_Path(entry,std::min(duration,t+.01f),lane,q)!=1)return 0;float dx=q[0]-p[0],dy=q[1]-p[1],dz=p[2]-q[2];if(std::abs(dx)+std::abs(dy)+std::abs(dz)<=.00001f)return 0;rotation[0]=-std::atan2(dy,std::sqrt(dx*dx+dz*dz))*57.2957795f;rotation[1]=std::atan2(dx,dz)*57.2957795f;rotation[2]=0;return 1;}catch(...){return 0;}}
+extern "C" int StarForge_PathOrientation(int entry,float age,int lane,float* rotation){try{auto& o=entry>=10000?project.at("events").at(entry-10000):project.at("waves").at(entry);auto& nodes=o.contains("memberPaths")&&lane>=0&&lane<o["memberPaths"].size()?o["memberPaths"][lane]:o["path"];if(nodes.size()<2)return 0;float duration=std::max(.1f,o.value("duration",8.0f));auto timing=StarForgeFlight::Parse(o.value("pathTiming",json()),nodes.size());auto clock=StarForgeFlight::Clock(age,duration,nodes.size(),timing);float p[3],q[3];SampleRemixPath(nodes,std::max(0.0f,clock.u-.001f),p);SampleRemixPath(nodes,std::min(1.0f,clock.u+.001f),q);float dx=q[0]-p[0],dy=q[1]-p[1],dz=p[2]-q[2];if(std::abs(dx)+std::abs(dy)+std::abs(dz)<=.00001f)return 0;rotation[0]=-std::atan2(dy,std::sqrt(dx*dx+dz*dz))*57.2957795f;rotation[1]=std::atan2(dx,dz)*57.2957795f;rotation[2]=0;return 1;}catch(...){return 0;}}
 
 extern "C" int StarForge_ReactiveInfo(int entry,int* target,float* speed,float* duration){try{auto& o=entry>=10000?project.at("events").at(entry-10000):project.at("waves").at(entry);if(!o.contains("flightBehavior"))return 0;auto& b=o["flightBehavior"];std::string type=b.value("type",std::string());if(type!="chase"&&type!="ram")return 0;*speed=Number(b,"speed",1,6000);*duration=Number(b,"duration",.1f,120);*target=-1;std::string id=b.value("targetId",std::string());for(int list=0;list<3;list++){const char* key=list==0?"waves":list==1?"events":"scenery";for(size_t i=0;i<project[key].size();i++)if(project[key][i].value("id",std::string())==id)*target=(int)i+list*10000;}return type=="ram"?2:1;}catch(...){return 0;}}
 

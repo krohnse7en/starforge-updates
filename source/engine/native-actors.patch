@@ -28,6 +28,36 @@
          }
          Object_Kill(&this->obj, this->sfxSource);
      }
+--- a/src/engine/fox_radio.c
++++ b/src/engine/fox_radio.c
+@@ -1,3 +1,4 @@
++#include "port/mods/StarForgeNative.h"
+ /*
+  * File: fox_title.c
+  * System: Radio
+@@ -59,6 +60,7 @@
+     TeamId teamId;
+     s32 pad;
+     s32 priority;
++    if(StarForge_PlaytestWarming())return;
+     msg = SEGMENTED_TO_VIRTUAL(msg);
+ 
+     switch (msg[0]) {
+--- a/src/audio/audio_general.c
++++ b/src/audio/audio_general.c
+@@ -1,3 +1,4 @@
++#include "port/mods/StarForgeNative.h"
+ #include "sys.h"
+ #include "sf64audio_provisional.h"
+ #include "sf64context.h"
+@@ -1278,6 +1279,7 @@
+ }
+ 
+ void Audio_PlaySfx(u32 sfxId, f32* sfxSource, u8 token, f32* freqMod, f32* volMod, s8* reverbAdd) {
++    if(StarForge_PlaytestWarming())return;
+     if (sSfxBankMuted[SFX_BANK_ALT(sfxId)] == 0) {
+         SfxRequest* request = &sSfxRequests[sSfxRequestWriteIndex];
+ 
 --- a/src/engine/fox_enmy2.c
 +++ b/src/engine/fox_enmy2.c
 @@ -1123,7 +1123,8 @@
@@ -80,6 +110,15 @@
      float mount[3],mountRoll;Actor* mountParent=(Actor*)StarForge_NativeAttachment(&this->obj,mount,&mountRoll);
      if(mountParent){Vec3f local={mount[0],mount[1],mount[2]},offset;if(mountParent==this||mountParent->obj.status==OBJ_FREE){Object_Kill(&this->obj,this->sfxSource);return;}Matrix_RotateY(gCalcMatrix,mountParent->obj.rot.y*M_DTOR,MTXF_NEW);Matrix_RotateX(gCalcMatrix,mountParent->obj.rot.x*M_DTOR,MTXF_APPLY);Matrix_RotateZ(gCalcMatrix,mountParent->obj.rot.z*M_DTOR,MTXF_APPLY);Matrix_MultVec3fNoTranslate(gCalcMatrix,&local,&offset);this->obj.pos.x=mountParent->obj.pos.x+offset.x;this->obj.pos.y=mountParent->obj.pos.y+offset.y;this->obj.pos.z=mountParent->obj.pos.z+offset.z;this->vwork[29]=mountParent->obj.rot;this->obj.rot.z=mountRoll;this->vel.x=this->vel.y=this->vel.z=0;return;}
  
+@@ -2717,7 +2720,7 @@
+     if(flight){Vec3f target={gPlayer[0].pos.x,gPlayer[0].pos.y,gPlayer[0].trueZpos};int found=flight==2,i;if(flight==1){for(i=0;i<ARRAY_COUNT(gActors);i++)if(&gActors[i]!=this&&gActors[i].obj.status==OBJ_ACTIVE){const char* uid=StarForge_NativeUid(&gActors[i].obj);if(uid&&chaseId&&strcmp(uid,chaseId)==0){target=gActors[i].obj.pos;found=1;break;}}if(!found)for(i=0;i<ARRAY_COUNT(gScenery);i++)if(gScenery[i].obj.status==OBJ_ACTIVE){const char*uid=StarForge_NativeUid(&gScenery[i].obj);if(uid&&chaseId&&strcmp(uid,chaseId)==0){target=gScenery[i].obj.pos;found=1;break;}}}if(found){float dx=target.x-this->obj.pos.x,dy=target.y-this->obj.pos.y,dz=target.z-this->obj.pos.z,length=sqrtf(dx*dx+dy*dy+dz*dz),step=chaseSpeed*(gVIsPerFrame>0?gVIsPerFrame:2)/60.0f;if(length>.00001f){if(step>length)step=length;this->obj.pos.x+=dx/length*step;this->obj.pos.y+=dy/length*step;this->obj.pos.z+=dz/length*step;this->obj.rot.y=atan2f(dx,dz)*M_RTOD;this->obj.rot.x=-atan2f(dy,sqrtf(dx*dx+dz*dz))*M_RTOD;}}this->vel.x=this->vel.y=this->vel.z=0;this->rot_0F4=this->obj.rot;return;}
+     int nativePath = StarForge_NativeMove(&this->obj, &this->obj.pos.x, &this->obj.pos.y, &this->obj.pos.z, &this->obj.rot.x, &this->obj.rot.y, gGameFrameCount, gPathProgress);
+     if (nativePath == 2) { Object_Kill(&this->obj, this->sfxSource); return; }
+-    if (nativePath == 1) { this->vel.x = this->vel.y = this->vel.z = 0; this->rot_0F4.x = this->obj.rot.x; this->rot_0F4.y = this->obj.rot.y; return; }
++    if (nativePath == 1) { if(StarForge_NativeEncounterFire(&this->obj,gGameFrameCount)==1)Effect_EnemyLaser(OBJ_EFFECT_ENEMY_LASER_1,this->obj.pos.x,this->obj.pos.y,this->obj.pos.z,gEnemyShotSpeed); this->vel.x = this->vel.y = this->vel.z = 0; this->rot_0F4.x = this->obj.rot.x; this->rot_0F4.y = this->obj.rot.y; return; }
+     f32 var_fv0;
+     extern float ArwingGroundStages_SpeedScale(void);
+     float stageSpeedScale = 1.0f;
 @@ -2919,6 +2922,21 @@
              CALL_CANCELLABLE_EVENT(ObjectInitEvent, OBJECT_TYPE_ACTOR, this) {
                  this->obj.status = OBJ_ACTIVE;

@@ -29,6 +29,7 @@ float StarForge_RemixScale(void* object);
 const CR_Encounter* StarForge_Waves(int* count);
 const CR_Setting* StarForge_Scenery(int* count);
 void StarForge_Update(float time,float x,float y,float progress);
+int StarForge_EncounterFire(int entry,float age,float step);
 int StarForge_Path(int entry,float age,int lane,float* point);
 void StarForge_ReactDamage(void* object);
 void StarForge_ReactForget(void* object);

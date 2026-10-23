@@ -1,4 +1,4 @@
-# StarForge source · v0.21.2
+# StarForge source · v0.28.1
 
 StarForge is a Windows level editor for Starship. Original editor code is MIT licensed. Public tester downloads and the signed update feed remain in this repository's Releases and channels directories.
 
@@ -14,7 +14,7 @@ The editor can show fallback shapes without model data; full libraries, voice pr
 ## Layout
 
 - editor: browser UI, shared tools, local Windows launcher and updater.
-- engine: modified Starship runtime/renderer source snapshots; apply them and native-actors.patch to the matching upstream Starship checkout before rebuilding the game. The patch contains the cross-floor Titania compatibility and Rasco cleanup fixes, plus passive solid warp pillars, gates and meteors.
+- engine: modified Starship runtime/renderer source snapshots; apply them and native-actors.patch to the matching upstream Starship checkout before rebuilding the game. The patch contains the cross-floor Titania compatibility and Rasco cleanup fixes, plus passive solid warp pillars, gates and meteors and suppressed audio/radio during protected playtest warmup. The fox_play.c snapshot contains the real-update warmup driver.
 - tools: development launcher build, local asset importer and tester setup source.
 
 The runtime snapshots are based on HarbourMasters/Starship commit 3322643f0bbf80d2f8f7e1c0d2c4c578515f6c90. Other Starship source and dependencies come from upstream; their own build instructions and licenses still apply. The tester download provides a matching compiled runtime for editor development.

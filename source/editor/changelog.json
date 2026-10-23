@@ -1,6 +1,413 @@
 {
   "releases": [
     {
+      "version": "0.28.1",
+      "date": "2026-10-23",
+      "title": "Space playtest boss height",
+      "changes": [],
+      "sections": [
+        {
+          "title": "Bugfixes",
+          "changes": [
+            "Authored space-stage playtests now start their final boss at flight height. They no longer use the disabled ground height, which placed bosses such as Area 6 Gorgon far below the player. Land-stage finales keep their terrain height."
+          ]
+        },
+        {
+          "title": "Documentation",
+          "changes": [
+            "Help explains space-stage finale placement and distinguishes the selected native stage boss from the environment boss label."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.28.0",
+      "date": "2026-10-19",
+      "title": "Bomb blast planning and spawn explanations — local preview",
+      "changes": [],
+      "sections": [
+        {
+          "title": "Feature Additions",
+          "changes": [
+            "Added an off-by-default Bomb blast preview to both editors. Adjustable center, center-on-selection and expansion controls show the asymmetric rail explosion envelope and potential active enemy centers through scenery. It is a snapshot, not a kill/score or full-flight simulation.",
+            "Native selection status now separates selected placements from active, removed, upcoming and not-loaded members. Hover for per-member removal details, including the route-height check."
+          ]
+        },
+        {
+          "title": "Investigation",
+          "changes": [
+            "Traced the missing Sector Y upper-route Gamma and missile members: two per group load around 94.30 seconds then fail the 4000-unit route-height removal check. A separate local test project delays only those four by 0.20 seconds, preserving world positions; all 24 members remain alive at 95.50 seconds in the preview. No live project or game rules were changed."
+          ]
+        },
+        {
+          "title": "Documentation",
+          "changes": [
+            "Help explains blast expansion and forward reach, through-wall checks versus bomb flight collisions, snapshot limitations, selection counts, and the Sector Y timing experiment."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.27.1",
+      "date": "2026-10-19",
+      "title": "Original-stage actor warning reference — local preview",
+      "changes": [],
+      "sections": [
+        {
+          "title": "Bugfixes",
+          "changes": [
+            "Opening or playtesting an untouched original stage no longer interrupts with a conservative no-combat actor estimate. Native warnings compare each frame against both 60 slots and the untouched stage under the same section, route and conditions. Added demand from edits remains detectable; counts are not clamped.",
+            "Original references load once per stage. Opening checks wait for the reference without losing their pending check; Playtest waits too. Missing reference data falls back to the conservative warning."
+          ]
+        },
+        {
+          "title": "UI Improvements",
+          "changes": [
+            "Original actor estimates remain visible in the badge and budget graph, with the original reference peak explained. The badge uses an informational color when a high estimate is already present in the original stage. Warnings for added demand include original and edited counts at the flagged frame."
+          ]
+        },
+        {
+          "title": "Documentation",
+          "changes": [
+            "Help explains original-stage informational estimates, frame-by-frame edit comparisons and fallback behavior."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.27.0",
+      "date": "2026-10-19",
+      "title": "Route-aware actor previews — local preview",
+      "changes": [],
+      "sections": [
+        {
+          "title": "Feature Additions",
+          "changes": [
+            "Venom I Player route offers reachable left/right fork sequences, with forced turns handled automatically. Existing Corneria main/waterfall, Sector X left/right and Sector Y upper/lower choices also drive route-aware loading.",
+            "Optional Actor boundaries and Route actor markers show loading/removal references and predicted alive, not-loaded and removed actors through scenery in the four original route stages. These are no-combat planning estimates, not guaranteed bomb damage or score."
+          ]
+        },
+        {
+          "title": "Bugfixes",
+          "changes": [
+            "Native previews now apply stage-specific placement loading extents, Venom I facing/lane eligibility, horizontal-turn loading windows, lateral/vertical and far-ahead cleanup, and per-type event rear cleanup in the four route stages. The original Venom I default no longer accumulates all-lane actors and triggers the previous 161-actor warning.",
+            "Static actor scenery samples now respect whether the native route simulation actually loaded the entry. Authored movement profile previews retain their previous loading behavior.",
+            "Native opening warnings now analyze the chosen section and route instead of unexpectedly jumping into a different original section. Warnings explain their no-combat demand estimate."
+          ]
+        },
+        {
+          "title": "Documentation",
+          "changes": [
+            "Help explains route choices, boundary colors, through-wall actor markers, bomb expiry versus blast radius, and remaining no-combat/camera/slot limitations."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.26.2",
+      "date": "2026-10-16",
+      "title": "Clear workspace corners — local preview",
+      "changes": [],
+      "sections": [
+        {
+          "title": "UI Improvements",
+          "changes": [
+            "Hidden the stage name and mouse-control text in the workspace corner. Navigation instructions remain in Help."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.26.1",
+      "date": "2026-10-16",
+      "title": "Compact workspace context — local preview",
+      "changes": [],
+      "sections": [
+        {
+          "title": "UI Improvements",
+          "changes": [
+            "Replaced the stage-information toolbar dropdown with small, non-interactive stage and navigation text in the workspace corner. No toolbar space or extra row is needed."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.26.0",
+      "date": "2026-10-15",
+      "title": "Guided encounter composer — local preview",
+      "changes": [],
+      "sections": [
+        {
+          "title": "UI Improvements",
+          "changes": [
+            "Compose Encounter now guides users through Scenery → Encounter → Preview. Initial setup shows only enemy, count and behavior; all detailed controls remain under Adjust directions and timing.",
+            "Preview progress, errors, retry and Add to level stay together. Back/change steps preserve choices. Add is unavailable until a valid preview is ready."
+          ]
+        },
+        {
+          "title": "Bugfixes",
+          "changes": [
+            "Moved route searches into a cancellable background worker with an eight-second timeout so the workspace remains responsive. Errors no longer appear below the main buttons offscreen.",
+            "Automatic approaches try other sides and heights, find clear space for blocked waypoints, and allow close scenery encounters to reach an attack point ahead of Fox. Manual approach controls remain available.",
+            "Preview validation identifies the exact invalid field. Add uses the reviewed route and checks for scenery changes instead of silently regenerating it on click."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.25.0",
+      "date": "2026-10-14",
+      "title": "Scenery-anchored encounter sequences — local preview",
+      "changes": [],
+      "sections": [
+        {
+          "title": "Feature Additions",
+          "changes": [
+            "Rebuilt Compose Encounter around scenery-anchored ambushes: reveal, attack approach, hold, fire at Fox, maneuver and escape. Each phase has timing controls; directions, formation spacing, stagger, height and clearance are adjustable.",
+            "Added hold beside scenery or use Fox’s normal cruise reference; feint-and-return, repeated strafing and alternating arrival patterns. Scheduled firing runs in Starship.",
+            "Added automatic 3D detours around scenery bounds with enemy-size and formation clearance. The actual smoothed curve is checked; blocked routes cannot be added. Editor-hidden and later scenery are included.",
+            "Added routes and phase markers directly over the workspace, a phase scrubber, conservative actor-budget feedback, editable inserted groups and one-step Undo.",
+            "Routes follow static scenery as the stage scrolls. Moving scenery placement later translates its linked encounter routes, with Undo. Moving enemy anchors are not supported."
+          ]
+        },
+        {
+          "title": "Bugfixes",
+          "changes": [
+            "Fixed composer routes drifting away from scenery during stage scrolling by using a world-anchored path in both editors and Starship.",
+            "Scheduled firing windows scale with flight-duration edits; existing enemies keep their previous firing behavior."
+          ]
+        },
+        {
+          "title": "Limitations",
+          "changes": [
+            "Scenery avoidance uses conservative model bounds, not exact game collision or terrain. Hiding behind a model is a geometric staging aid, not a guarantee of camera occlusion. Regenerate after moving scenery or editing routes; test combat and balance in Starship."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.24.0",
+      "date": "2026-10-14",
+      "title": "Timeline row locks and visibility â€” local preview",
+      "changes": [],
+      "sections": [
+        {
+          "title": "Feature Additions",
+          "changes": [
+            "Added lock and eye controls beside each occupied timeline row. Controls affect the objects sharing that row; expanded groups expose individual member rows. Changes support Undo.",
+            "Removed the separate Layers button. Hidden objects remain in the timeline so they can be shown again; visibility only affects the editor.",
+            "Repeat scenery can now follow a route drawn in the workspace: add and drag points, remove points, smooth curves and preview placement before committing.",
+            "Added Keep orientation / Follow route and rotation-offset controls, an explicit selected-scenery template, and optional numeric route settings. Repeat requires only unlocked scenery selected.",
+            "Rotate tool options now select Object, Flight Path or Both for the same gizmos and exact-angle controls. Route shaping is grouped there; pauses and endpoint settings remain in the path editor."
+          ]
+        },
+        {
+          "title": "UI Improvements",
+          "changes": [
+            "Placed Fit beside the timeline zoom + button and centered Fit and Sections text.",
+            "Scatter settings use a floating options popup, keeping the toolbar stable.",
+            "Removed the Rotate 45Â° toolbar button; exact 45-degree rotation remains in Rotate options. Moved Flip Formation to formation settings in Properties.",
+            "Clarified how Brush takes its scenery types from the workspace selection.",
+            "Made model and actor counters smaller and placed them together in the workspace bottom-left corner."
+          ]
+        },
+        {
+          "title": "Bugfixes",
+          "changes": [
+            "Fixed category collapse and expand for every timeline lane, including Enemies and Scenery. Collapsed categories keep aggregate row controls; expanding preserves non-overlapping clip rows.",
+            "Removed redundant preview-position and timeline-hint labels that were being re-added during startup."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.23.3",
+      "date": "2026-10-14",
+      "title": "Cleaner workspace tool row â€” local preview",
+      "changes": [],
+      "sections": [
+        {
+          "title": "UI Improvements",
+          "changes": [
+            "Removed the Toolbox text heading while retaining an accessible toolbar name.",
+            "Moved Align & Space directly before the yellow selection summary."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.23.2",
+      "date": "2026-10-14",
+      "title": "Compact timeline and unclipped menus â€” local preview",
+      "changes": [],
+      "sections": [
+        {
+          "title": "UI Improvements",
+          "changes": [
+            "Condensed playback and timeline controls into two compact rows, preserving exact time, scrubbing, speed, units, zoom, Fit and panel detachment.",
+            "Moved section naming, adding, jumping and management into the timeline Sections dropdown. Layers stays beside it.",
+            "Converted the remaining Toolbox actions to consistent icons with accessible names, explanatory hover text, shortcuts and active highlights.",
+            "Integrated route rotation, waypoint pauses and endpoint controls into Flight Path Properties and the drawing editor Route & timing menu. Removed the empty Design Tools menu."
+          ]
+        },
+        {
+          "title": "Bugfixes",
+          "changes": [
+            "Align & Space and Sections menus now float above scrolling panels, stay within the window and scroll when necessary instead of being clipped."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.23.1",
+      "date": "2026-10-14",
+      "title": "One main toolbar â€” local preview",
+      "changes": [],
+      "sections": [
+        {
+          "title": "UI Improvements",
+          "changes": [
+            "Removed the Build/Encounters workspace row. Compose Encounter and Design Tools now sit beside Selection in the main toolbar.",
+            "Kept stage information in a compact header menu and selection status beside the Toolbox.",
+            "Scenery stamps now attach their placement controls beneath the Toolbox after the workspace navigation row was removed."
+          ]
+        },
+        {
+          "title": "Bugfixes",
+          "changes": [
+            "Selection-dependent tool availability now refreshes immediately after selecting an object, including when background timer throttling is active."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.23.0",
+      "date": "2026-10-14",
+      "title": "Consistent tool windows and timeline organization â€” local preview",
+      "changes": [],
+      "sections": [
+        {
+          "title": "Feature Additions",
+          "changes": [
+            "Design tools use a nonblocking side panel with top-right minimize and close controls. Restore a minimized tool without losing entered settings. Mission Sections and Objects and Layers expand inside the timeline.",
+            "Mission Sections now has name, add, jump and manage controls in the timeline. Objects and Layers opens from the same timeline strip.",
+            "Added remembered Grid density choices under Scene visibility & guides. Mouse and keyboard Grid Snap use the visible spacing."
+          ]
+        },
+        {
+          "title": "UI Improvements",
+          "changes": [
+            "Design Tools and Arrange shortcuts disable when their selection requirements are not met; tooltips explain what to select. Independent tools stay available.",
+            "Expanded Help with task steps, selection requirements, usage examples and diagrams for the new design tools.",
+            "Building tools now use compact Toolbox icons with accessible names and explanatory hover text.",
+            "Removed the redundant playtest note from Level Setup; its explanation remains in Help.",
+            "Saved assemblies is now an inline section of the Selection menu, including naming, saving and inserting assemblies without another tool panel.",
+            "Alignment and exact-offset controls now live under Toolbox â†’ Align & Space, with clearer edge names and disabled actions until enough suitable objects are selected.",
+            "Removed the redundant Preview workspace tab; the shared playback controls and Game View remain available.",
+            "Actor budget review now opens beneath Level Checks in the right sidebar."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.22.2",
+      "date": "2026-10-14",
+      "title": "Selection controls together â€” local preview",
+      "changes": [],
+      "sections": [
+        {
+          "title": "UI Improvements",
+          "changes": [
+            "Moved Select whole groups and Timeline snap to clips / playhead into the Selection menu, keeping selection controls together.",
+            "Moved Actor budget over time and Recover an autosave into the Project menu."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.22.1",
+      "date": "2026-10-14",
+      "title": "More workspace room and cleaner controls â€” local preview",
+      "changes": [],
+      "sections": [
+        {
+          "title": "UI Improvements",
+          "changes": [
+            "Removed the separate stage-information row. Stage information and native section selection now share a compact menu beside the workspace tabs.",
+            "Moved mouse controls into that menu and a workspace tooltip.",
+            "Moved Collision protection to the bottom of the Edit menu, below Preview paste placement."
+          ]
+        },
+        {
+          "title": "Bugfixes",
+          "changes": [
+            "Centered Favorites stars in their buttons using a consistent vector icon.",
+            "Workspace menus now follow the same single-open-menu behavior as the main toolbar."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.22.0",
+      "date": "2026-10-14",
+      "title": "Design studio â€” local development preview",
+      "changes": [],
+      "sections": [
+        {
+          "title": "Feature Additions",
+          "changes": [
+            "Added shared design workspace navigation and a Design tools menu in both editors.",
+            "Arrange selected models by their bounds, distribute equal gaps, or apply a relative X/Y/Z offset to the entire selection.",
+            "Save named mission bookmarks and jump to important moments.",
+            "Inspect actor counts over time with a clickable graph and peak shortcuts.",
+            "Recover up to 20 local autosave snapshots per editor as an unsaved copy.",
+            "Save mixed-category selections as reusable assemblies.",
+            "Choose whole-group or individual-member workspace selection, identify the primary selection, and optionally snap timeline moves to clips and the playhead.",
+            "Compose editable enemy encounters around a selected landmark, with appear/approach/act/leave route previews.",
+            "Rotate selected flight paths upward, diagonally, down, toward Fox or away from Fox while keeping spawn positions and model transforms.",
+            "Add waypoint pauses and hold the final world position until Fox passes it; preview and Starship use the same timing rules.",
+            "Lock placed objects against editing, or hide them only in the editor, through Objects and layers.",
+            "Use persistent scenery stamps with a full geometry ghost, rotation, layout mirroring, reference height locking and visible-grid snapping.",
+            "Repeat scenery along a line or height curve using equal distances along the route, with one Undo for the whole repeat.",
+            "Preview weighted scenery brushes with per-axis random rotation, optional flips, size and burial ranges; save reusable local brush presets.",
+            "Use the scenery eyedropper (I) to turn an existing object into a stamp, or Alt-click to choose overlapping or buried objects.",
+            "Edit shared placement, timing and model transforms with explicit selection, primary-object or group scope; mixed values remain unchanged unless edited.",
+            "Filter library cards by source stage, actor-slot usage, static or original behavior, and available model previews, separately for each category.",
+            "Replace selected scenery across scenery and actor pools while preserving individual poses, timing, size, skew and group references; one Undo restores the originals.",
+            "Review encounter act timing, conservative actor peaks and nearby scenery bounds before adding an encounter.",
+            "Show nearby edge, height and gap guides while stamping scenery.",
+            "Optionally preview paste bounds and named blockers before confirming or cancelling the paste.",
+            "Review playtest stage and preview differences, then choose the beginning or current frame; current-frame playtests simulate preceding updates with neutral, protected controls.",
+            "Show direction arrows, arrival times, pauses and endpoint holds while editing waypoints, with multi-selection counts and drag offsets.",
+            "Apply arbitrary X/Y/Z route rotations and gradual bends without rotating the enemy model."
+          ]
+        },
+        {
+          "title": "Optimizations",
+          "changes": [
+            "Timeline snapping caches candidate clip edges and uses a sorted search while dragging.",
+            "Caches parsed authored flight timing and avoids redrawing unchanged scenery-placement ghosts."
+          ]
+        },
+        {
+          "title": "Bugfixes",
+          "changes": [
+            "Actor-limit warnings correctly explain that actor-based scenery uses actor slots, and offer budget review and actor selection.",
+            "Flight-path resizing scales pauses together with travel time.",
+            "Locked selections are protected from keyboard movement, deletion, reset-orientation shortcuts and group timeline edits.",
+            "Scenery stamp controls reserve room for the workspace while active.",
+            "Private local brush libraries are excluded from source exports.",
+            "Shared Properties no longer prevents the existing Properties sections from being organized.",
+            "Waypoint insertions and removals keep pauses attached to the correct remaining waypoint, including Undo and cancellation.",
+            "Native scenery picking follows what the workspace displays, including regular scenery before its stream entry activates.",
+            "Native section object counts update after additions and deletions.",
+            "Native flight-time fields consistently include pauses and resize travel and pauses together.",
+            "Native scenery stamps recompute attached-piece offsets after layout mirroring or rotation."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.21.2",
       "date": "2026-10-14",
       "title": "Static scenery throughout the editor and playtests",
@@ -38,7 +445,7 @@
       "version": "0.21.0",
       "date": "2026-10-14",
       "changes": [
-        "Drag the right edge of an enemy or teammate group clip to stretch or shorten every member’s flight. Entry spacing and flight times change together, with one Undo.",
+        "Drag the right edge of an enemy or teammate group clip to stretch or shorten every memberâ€™s flight. Entry spacing and flight times change together, with one Undo.",
         "Group flight time controls are available in authored and original-stage Properties. Original routes become editable predicted paths when retimed.",
         "Authored Flight time now changes movement instead of storing an unused value on original-script and formation enemies.",
         "Approach speed is disabled when original movement, a timed path or a reactive behavior controls speed, with an explanation of the effective control."
@@ -47,7 +454,7 @@
         {
           "title": "Feature Additions",
           "changes": [
-            "Drag the right edge of an enemy or teammate group clip to stretch or shorten every member’s flight. Entry spacing and flight times change together, with one Undo.",
+            "Drag the right edge of an enemy or teammate group clip to stretch or shorten every memberâ€™s flight. Entry spacing and flight times change together, with one Undo.",
             "Group flight time controls are available in authored and original-stage Properties. Original routes become editable predicted paths when retimed."
           ]
         },
@@ -210,7 +617,7 @@
         "Removed Tester setup from the in-app Help manual. Installation instructions remain in the download package.",
         "Reorganized Properties into collapsible task sections while keeping the original Object Library cards and previews. Project menus now stack correctly, close each other, and share matching heights with the top-row controls.",
         "Floor-safe enemy insertion now checks the full predicted flight route and raises the initial spawn height enough for its lowest point, preserving route shape, timing and formation spacing.",
-        "Added Edit → Raise spawn above floor to apply the same check to an existing selected enemy or group.",
+        "Added Edit â†’ Raise spawn above floor to apply the same check to an existing selected enemy or group.",
         "Help is organized into task-based sections; related selection, scatter and movement guidance is consolidated, and fix-specific notes are folded into troubleshooting.",
         "New enemies now default to Static side-to-side movement. Existing saved choices remain unchanged.",
         "Fixed the Project dropdown appearing behind the editing toolbar. New, Open, Save As and Open Path now stay fully visible.",
@@ -241,7 +648,7 @@
         "Opening an over-limit project jumps to its first overloaded frame. Playtest warns again, with an optional Do Not Show Again checkbox. Counts follow the preview; game-generated actors can need additional slots.",
         "Playtest checks item coordinates before launching. Rejected projects no longer silently switch to built-in remix enemies, and game load errors are shown in the editor.",
         "Single scenery clips and scattered copies show their library names instead of Scenery pair.",
-        "Older matching pairs show Name × 2; different pairs show both names. Properties and history use the same scenery names.",
+        "Older matching pairs show Name Ã— 2; different pairs show both names. Properties and history use the same scenery names.",
         "Detours add local bends rather than shifting the whole path. The start and end stay fixed, and Undo restores the old route.",
         "Enemies, enemy groups and scenery can be selected and copied together. Edit has Copy and Paste buttons.",
         "Scatter checks nearby objects, other scattered items and later preview routes; a blocked batch adds nothing.",
@@ -258,7 +665,7 @@
             "Native actors can be inserted in authored custom stages and original-stage projects with actual model previews and native playtest behavior. Stage names and alternate names are searchable.",
             "Actor budgets include attached cargo, Delphor heads and Rasco rocks. Native shared-state reservations reset on playtest restart; unsupported dependent assemblies remain excluded.",
             "Floor-safe enemy insertion now checks the full predicted flight route and raises the initial spawn height enough for its lowest point, preserving route shape, timing and formation spacing.",
-            "Added Edit → Raise spawn above floor to apply the same check to an existing selected enemy or group.",
+            "Added Edit â†’ Raise spawn above floor to apply the same check to an existing selected enemy or group.",
             "New enemies now default to Static side-to-side movement. Existing saved choices remain unchanged.",
             "Top-level menus close each other when another opens. Click outside or press Escape to dismiss them.",
             "Aligned the level name field, shuffle button, top-row menus and action buttons to the same height.",
@@ -313,7 +720,7 @@
             "Help now has a Changelog button beside Check for updates. Every published update must include a matching changelog entry.",
             "Editor source is published on GitHub under MIT. Generated game artwork, audio, levels, personal files and signing keys are excluded; developer setup imports local assets separately.",
             "Single scenery clips and scattered copies show their library names instead of Scenery pair.",
-            "Older matching pairs show Name × 2; different pairs show both names. Properties and history use the same scenery names."
+            "Older matching pairs show Name Ã— 2; different pairs show both names. Properties and history use the same scenery names."
           ]
         }
       ]
@@ -356,7 +763,7 @@
       "changes": [
         "Reorganized Properties into collapsible task sections while keeping the original Object Library cards and previews. Project menus now stack correctly, close each other, and share matching heights with the top-row controls.",
         "Floor-safe enemy insertion now checks the full predicted flight route and raises the initial spawn height enough for its lowest point, preserving route shape, timing and formation spacing.",
-        "Added Edit → Raise spawn above floor to apply the same check to an existing selected enemy or group. ",
+        "Added Edit â†’ Raise spawn above floor to apply the same check to an existing selected enemy or group. ",
         "Help is organized into task-based sections; related selection, scatter and movement guidance is consolidated, and fix-specific notes are folded into troubleshooting.",
         "New enemies now default to Static side-to-side movement. Existing saved choices remain unchanged."
       ]
@@ -423,7 +830,7 @@
       "date": "2026-10-13",
       "changes": [
         "Single scenery clips and scattered copies show their library names instead of Scenery pair.",
-        "Older matching pairs show Name × 2; different pairs show both names. Properties and history use the same scenery names."
+        "Older matching pairs show Name Ã— 2; different pairs show both names. Properties and history use the same scenery names."
       ]
     },
     {

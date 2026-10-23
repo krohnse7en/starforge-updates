@@ -104,7 +104,7 @@ static void Wave(void){
     if(logFile){fprintf(logFile,"%.2f encounter %d: %s\n",clockTime,wave+1,e->name);fflush(logFile);}
     wave++;
 }
-int StarForge_RadioBusy(void){return gRadioState!=0;}
+int StarForge_RadioBusy(void){return !StarForge_PlaytestWarming()&&gRadioState!=0;}
 void StarForge_PlayRadio(int id,int speaker,unsigned short* custom){u16* msg=custom?custom:Message_PtrFromId(id);if(msg)Radio_PlayMessage(msg,speaker);}
 void StarForge_AddItem(int id,float x,float y,float z,int entry){int i;ObjectInit init={0};for(i=0;i<ARRAY_COUNT(gItems);i++)if(gItems[i].obj.status==OBJ_FREE)break;if(i==ARRAY_COUNT(gItems))return;init.id=id;init.xPos=x;init.yPos=y;init.zPos1=gPathProgress;init.zPos2=3000-z;Item_Load(&gItems[i],&init);StarForge_RemixTransform(3,entry,&gItems[i].obj,&gItems[i].obj.rot.x);}
 void StarForge_Flyby(int eventIndex,int entry,int ship,float x,float y,int shoot){int slot=Spawn(ship==5?164:ship==4?165:162,30,0,x,y);if(slot<0)return;tracks[slot].entry=entry;tracks[slot].shoot=shoot;gActors[slot].iwork[12]=ship;gActors[slot].info.bonus=0;gActors[slot].info.damage=0;}
@@ -206,14 +206,16 @@ void CorneriaRemix_Update(void){
         a->obj.pos.x=p->xPath+x;a->obj.pos.y=p->yPath+y;a->obj.pos.z=p->trueZpos-z;
         a->vel.x=a->vel.y=a->vel.z=0;
         a->obj.rot.x=0;a->obj.rot.y=0;a->obj.rot.z=t->mode==3?age*30:0;if(followsCustomPath&&StarForge_FacesPath(t->entry)){float orientation[3];if(StarForge_PathOrientation(t->entry,age,t->mode==30?0:t->lane,orientation)){a->obj.rot.x=orientation[0];a->obj.rot.y=orientation[1];a->obj.rot.z=orientation[2];}}StarForge_RemixTransform(t->mode==30?2:0,t->entry,&a->obj,&a->obj.rot.x);a->rot_0F4=a->obj.rot;
-        if(t->shoot&&t->mode!=4&&t->mode!=5&&a->eventType!=EVID_ME_METEOR_4&&a->eventType!=EVID_SPACE_MINE&&a->eventType!=EVID_WZ_PILLAR_1&&a->eventType!=EVID_WZ_PILLAR_2&&a->eventType!=EVID_WZ_METEOR_1&&a->eventType!=EVID_WZ_METEOR_2&&a->eventType!=EVID_WZ_GATE&&
+        int scheduledFire=t->entry>=0?StarForge_EncounterFire(t->entry,age,(gVIsPerFrame>0?gVIsPerFrame:2)/60.0f):-1;
+        if(scheduledFire==1)Effect_EnemyLaser(OBJ_EFFECT_ENEMY_LASER_1,a->obj.pos.x,a->obj.pos.y,a->obj.pos.z,gEnemyShotSpeed);
+        if(scheduledFire<0&&t->shoot&&t->mode!=4&&t->mode!=5&&a->eventType!=EVID_ME_METEOR_4&&a->eventType!=EVID_SPACE_MINE&&a->eventType!=EVID_WZ_PILLAR_1&&a->eventType!=EVID_WZ_PILLAR_2&&a->eventType!=EVID_WZ_METEOR_1&&a->eventType!=EVID_WZ_METEOR_2&&a->eventType!=EVID_WZ_GATE&&
            ((gGameFrameCount+i*17)%110==0))a->work_048=EVACT_2;
     }
     clockTime+=(gVIsPerFrame>0?gVIsPerFrame:2)/60.0f;
     if(clockTime>=StarForge_SectionDuration()){
         ObjectInit init={0};
         for(i=0;i<60;i++)if(tracks[i].used){Object_Kill(&gActors[i].obj,gActors[i].sfxSource);tracks[i].used=0;}
-        switch(gCurrentLevel){case LEVEL_METEO:init.id=OBJ_BOSS_ME_CRUSHER;break;case LEVEL_SECTOR_X:init.id=OBJ_BOSS_SX_SPYBORG;break;case LEVEL_AREA_6:init.id=OBJ_BOSS_A6_GORGON;break;case LEVEL_SECTOR_Y:init.id=OBJ_BOSS_SY_SHOGUN;break;case LEVEL_ZONESS:init.id=OBJ_BOSS_ZO_SARUMARINE;break;case LEVEL_VENOM_1:init.id=OBJ_BOSS_VE1_GOLEMECH;break;default:init.id=OBJ_BOSS_CO_GRANGA;break;}init.zPos1=gPathProgress;init.zPos2=-1000;init.yPos=gGroundHeight;
+        switch(gCurrentLevel){case LEVEL_METEO:init.id=OBJ_BOSS_ME_CRUSHER;break;case LEVEL_SECTOR_X:init.id=OBJ_BOSS_SX_SPYBORG;break;case LEVEL_AREA_6:init.id=OBJ_BOSS_A6_GORGON;break;case LEVEL_SECTOR_Y:init.id=OBJ_BOSS_SY_SHOGUN;break;case LEVEL_ZONESS:init.id=OBJ_BOSS_ZO_SARUMARINE;break;case LEVEL_VENOM_1:init.id=OBJ_BOSS_VE1_GOLEMECH;break;default:init.id=OBJ_BOSS_CO_GRANGA;break;}init.zPos1=gPathProgress;init.zPos2=-1000;init.yPos=gLevelType==LEVELTYPE_SPACE?0:gGroundHeight;
         Boss_Load(&gBosses[0],&init);finale=1;
         if(logFile){fprintf(logFile,"Stage %d finale, hits %d\n",gCurrentLevel,gHitCount);fflush(logFile);}
     }

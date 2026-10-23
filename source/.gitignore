@@ -8,6 +8,7 @@ editor/Music/
 editor/MusicPreview/
 editor/.browser-profile/
 editor/Recovery/
+editor/Library/
 editor/Updates/
 editor/*session*.json
 editor/bridge.json

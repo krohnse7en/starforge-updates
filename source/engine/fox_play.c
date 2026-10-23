@@ -7171,6 +7171,57 @@ void Play_SetupZPos360(f32* zPos) {
     *zPos += gPathProgress + 15000.0f;
 }
 
+
+/* Fast-forward real game updates, using neutral input instead of deleting old objects. */
+static s32 sStarForgeWarmRemaining=0,sStarForgeWarmRequested=0,sStarForgeWarmTicks=0;
+static s32 sStarForgeWarmSawActive=0,sStarForgeWarmShield=1;
+static u8 sStarForgeWarmVolumes[3];
+static void StarForge_WarmupFinish(s32 success){
+    s32 type;
+    StarForge_SetPlaytestWarming(0);
+    for(type=0;type<3;type++)Audio_SetVolume(type,sStarForgeWarmVolumes[type]);
+    gRadioState=0;Audio_ClearVoice();
+    gFillScreenRed=gFillScreenGreen=gFillScreenBlue=0;
+    gFillScreenAlpha=gFillScreenAlphaTarget=0;
+    gPlayer[0].mercyTimer=60;
+    StarForge_PlaytestWarmupReport(success,sStarForgeWarmRequested-sStarForgeWarmRemaining);
+    sStarForgeWarmRemaining=0;
+}
+static void StarForge_WarmupBegin(void){
+    s32 type;
+    sStarForgeWarmRemaining=sStarForgeWarmRequested=StarForge_PlaytestStartFrames(gCurrentLevel);
+    sStarForgeWarmTicks=sStarForgeWarmSawActive=0;
+    if(sStarForgeWarmRemaining<=0)return;
+    sStarForgeWarmShield=gPlayer[0].shields>0?gPlayer[0].shields:1;
+    for(type=0;type<3;type++){sStarForgeWarmVolumes[type]=gVolumeSettings[type];Audio_SetVolume(type,0);}
+    StarForge_SetPlaytestWarming(1);gRadioState=0;Audio_ClearVoice();
+    StarForge_PlaytestWarmupReport(-1,0);
+}
+static s32 StarForge_WarmupUpdate(void){
+    OSContPad held[4],pressed[4];u8 vi; s32 step,active;
+    if(sStarForgeWarmRemaining<=0)return 0;
+    memcpy(held,gControllerHold,sizeof(held));memcpy(pressed,gControllerPress,sizeof(pressed));
+    memset(gControllerHold,0,sizeof(held));memset(gControllerPress,0,sizeof(pressed));
+    vi=gVIsPerFrame;gVIsPerFrame=2;gPauseEnabled=false;
+    for(step=0;step<120&&sStarForgeWarmRemaining>0;step++){
+        if(step)gGameFrameCount++;
+        active=gPlayer[0].state==PLAYERSTATE_ACTIVE;
+        if(active)sStarForgeWarmSawActive=1;
+        if((sStarForgeWarmSawActive&&(!active||gLevelMode!=LEVELMODE_ON_RAILS))||
+           sStarForgeWarmTicks++>sStarForgeWarmRequested+2700){StarForge_WarmupFinish(0);break;}
+        gPlayer[0].mercyTimer=1000;
+        CALL_CANCELLABLE_EVENT(PlayUpdateEvent){Play_Update();}
+        if(gPlayer[0].shields<sStarForgeWarmShield)gPlayer[0].shields=sStarForgeWarmShield;
+        if(gLevelStartStatusScreenTimer>0)gLevelStartStatusScreenTimer--;
+        if(active)sStarForgeWarmRemaining--;
+        if(gPlayState!=PLAY_UPDATE){StarForge_WarmupFinish(0);break;}
+        if(sStarForgeWarmRemaining==0){StarForge_WarmupFinish(1);break;}
+    }
+    gVIsPerFrame=vi;memcpy(gControllerHold,held,sizeof(held));memcpy(gControllerPress,pressed,sizeof(pressed));
+    if(sStarForgeWarmRemaining>0){gFillScreenRed=gFillScreenGreen=gFillScreenBlue=0;gFillScreenAlpha=gFillScreenAlphaTarget=255;}
+    return 1;
+}
+
 void Play_Main(void) {
     s32 pad1;
     s32 pad2;
@@ -7242,6 +7293,7 @@ void Play_Main(void) {
             sVoiceVolume = gVolumeSettings[AUDIO_TYPE_VOICE];
             sSfxVolume = gVolumeSettings[AUDIO_TYPE_SFX];
             gPlayState = PLAY_UPDATE;
+            StarForge_WarmupBegin();
             break;
 
         case PLAY_UPDATE:
@@ -7252,6 +7304,7 @@ void Play_Main(void) {
             }
 
             gDrawMode = DRAW_PLAY;
+            if(StarForge_WarmupUpdate())break;
             CALL_CANCELLABLE_EVENT(PlayUpdateEvent) {
                 Play_Update();
             }
