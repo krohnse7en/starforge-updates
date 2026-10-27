@@ -1,3 +1,4 @@
+#include "StarForgeImportedScene.h"
 #ifdef _MSC_VER
 /* Rotation ABI mismatches are memory-corruption bugs, never harmless warnings. */
 #pragma warning(error: 4133)
@@ -146,6 +147,7 @@ void CorneriaRemix_PreUpdate(void){
     gLevelObjects=noObjects;gObjectLoadIndex=0;
 }
 void CorneriaRemix_Update(void){
+    if(StarForge_ImportedActive())return;
     int i,j;float age,x,y,z,phase;Player* p=&gPlayer[0];
     if(!Enabled()||!running||finale||p->state!=PLAYERSTATE_ACTIVE)return;
     StarForge_Update(clockTime,p->pos.x,p->pos.y,gPathProgress);
@@ -226,3 +228,5 @@ void StarForge_PlayRadioVoice(int id,int speaker,unsigned short* custom,int voic
     int i;for(i=0;i<1023;i++){privateMessage[i]=source[i];if(source[i]==0)break;}privateMessage[i<1023?i:1023]=0;
     StarForge_SetMessageVoice(privateMessage,voice);Radio_PlayMessage(privateMessage,speaker);
 }
+
+#include "StarForgeImportedSceneDraw.inc"

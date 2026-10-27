@@ -1,3 +1,4 @@
+#include "port/mods/StarForgeImportedScene.h"
 #include "prevent_bss_reordering.h"
 #include "global.h"
 #include "port/mods/SpaceArmada.h"
@@ -2382,6 +2383,7 @@ void Player_CollisionCheck(Player* player) {
 }
 
 void Player_FloorCheck(Player* player) {
+    if(StarForge_ImportedActive())return;
     s32 sp144;
     Scenery360* scenery360;
     Scenery* scenery;
@@ -6289,6 +6291,7 @@ void Player_Update(Player* player) {
 }
 
 void Camera_UpdateArwingOnRails(Player* player) {
+    if(StarForge_ImportedCamera(player))return;
     f32 var_fv1;
     f32 var_fv0;
     f32 temp;
@@ -7101,6 +7104,7 @@ void Play_Update(void) {
 
     SpaceArmada_PreUpdate();
     CorneriaRemix_PreUpdate();
+    StarForge_ImportedPreUpdate();
     SolarMarine_PreUpdate();
     Play_UpdateFillScreen();
 
@@ -7117,6 +7121,7 @@ void Play_Update(void) {
     for (i = 0; i < gCamCount; i++) {
         gPlayer[i].num = gPlayerNum = i;
         Player_Update(&gPlayer[i]);
+        StarForge_ImportedCollision(&gPlayer[i]);
     }
 
     Object_Update();

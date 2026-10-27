@@ -1,3 +1,4 @@
+#include "port/mods/StarForgeImportedScene.h"
 #include "global.h"
 #include "port/mods/CorneriaRemix.h"
 #include "assets/ast_katina.h"
@@ -615,7 +616,27 @@ void Background_DrawBackdrop(void) {
                     }
 
                     // Apply camera roll and translate matrix to the starting position (far left)
-                    Matrix_RotateZ(gGfxMatrix, gPlayer[gPlayerNum].camRoll * M_DTOR, MTXF_APPLY);
+                    if (StarForge_ImportedActive() && !SFI_NativeFlight()) {
+                        // Infinite sky shares the scene camera rotation, but not its translation.
+                        Matrix skyRotation;
+                        Vec3f up = { 0.0f, 100.0f, 0.0f }, skyUp;
+                        Player* skyPlayer = &gPlayer[gPlayerNum];
+                        Matrix_RotateY(&skyRotation, -skyPlayer->camYaw, MTXF_NEW);
+                        Matrix_RotateX(&skyRotation, skyPlayer->camPitch, MTXF_APPLY);
+                        Matrix_RotateZ(&skyRotation, -skyPlayer->camRoll * M_DTOR, MTXF_APPLY);
+                        Matrix_MultVec3f(&skyRotation, &up, &skyUp);
+                        Matrix_LookAt(gGfxMatrix, 0, 0, 0,
+                            gPlayCamAt.x - gPlayCamEye.x,
+                            gPlayCamAt.y - gPlayCamEye.y,
+                            gPlayCamAt.z - gPlayCamEye.z,
+                            skyUp.x, skyUp.y, skyUp.z, MTXF_APPLY);
+                        sp13C = 0.0f;
+                        bgYpos = 0.0f;
+                        bgCutsceneFix = 0.0f;
+                        skipInterpolation = false;
+                    } else {
+                        Matrix_RotateZ(gGfxMatrix, gPlayer[gPlayerNum].camRoll * M_DTOR, MTXF_APPLY);
+                    }
                     Matrix_Translate(gGfxMatrix, sp13C - (7280.0f * 2.0f), -2000.0f + bgYpos + bgCutsceneFix, -6000.0f,
                                      MTXF_APPLY);
                     Matrix_SetGfxMtx(&gMasterDisp);
@@ -1324,6 +1345,7 @@ void AllRangeGround_Draw(void) {
 }
 
 void Background_DrawGround(void) {
+    if(StarForge_ImportedActive())return;
     const int environmentLevel=StarForge_FloorLevel();
     f32 sp1D4;
     s32 i;

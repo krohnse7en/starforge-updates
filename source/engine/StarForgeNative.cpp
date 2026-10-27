@@ -1,5 +1,6 @@
 #include "StarForgeRuntime.h"
 #include "StarForgeNative.h"
+#include "StarForgeImportedScene.h"
 #include "StarForgeFlightTiming.h"
 #ifdef _WIN32
 #define NOMINMAX
@@ -40,8 +41,8 @@ extern "C" int StarForge_PlaytestStartFrames(int level){return level==playtestWa
 extern "C" int StarForge_PlaytestWarming(void){return playtestWarming;}
 extern "C" void StarForge_SetPlaytestWarming(int active){playtestWarming=active!=0;}
 extern "C" void StarForge_PlaytestWarmupReport(int success,int frames){std::ofstream file("StarForge/warmup-status.txt");if(success<0)file<<"Preparing: simulating the preceding rail section with neutral controls.";else if(success)file<<"Reached: "<<frames/30.0f<<" seconds. Neutral controls; prior player combat was not replayed.";else file<<"Warning: the stage changed mode or ended before the requested start. Reached "<<frames/30.0f<<" seconds; use a full-stage playtest to review this section.";}
-extern "C" void StarForge_NativeLoad(void){playtestWarmTarget=-1;playtestWarmFrames=0;playtestWarming=false;StarForge_StaticReset();StarForge_PresentationReload();sections.clear();scripts.clear();overrides.clear();dialogueOverrides.clear();dialogueVoices.clear();instanceSettings.clear();liveInstances.clear();stage=-1;arrivalOrigin=-1;musicSequence=-1;StarForge_MusicLoad(0);try{
- std::ifstream f("StarForge/project.json");if(!f)return;auto j=json::parse(f);ReadPlaytestStart(j);StarForge_GroupLoad(j.dump().c_str());if(j.value("schema","")=="starforge.level.v1"){if(j.contains("music")){auto&m=j["music"];if(m.value("type",std::string())=="native"){musicSequence=m.at("sequence").get<int>();if(musicSequence<2||musicSequence>16)throw std::runtime_error("music sequence");if(musicSequence!=14)musicSequence|=32768;}else if(m.value("type",std::string())=="custom"){musicSequence=65535;StarForge_MusicLoad(1);}stage=0;}return;}if(j.value("schema","")!="starforge.native.v1")return;
+extern "C" void StarForge_NativeLoad(void){SFI_Load("{}");playtestWarmTarget=-1;playtestWarmFrames=0;playtestWarming=false;StarForge_StaticReset();StarForge_PresentationReload();sections.clear();scripts.clear();overrides.clear();dialogueOverrides.clear();dialogueVoices.clear();instanceSettings.clear();liveInstances.clear();stage=-1;arrivalOrigin=-1;musicSequence=-1;StarForge_MusicLoad(0);try{
+ std::ifstream f("StarForge/project.json");if(!f)return;auto j=json::parse(f);SFI_Load(j.dump().c_str());ReadPlaytestStart(j);StarForge_GroupLoad(j.dump().c_str());if(j.value("schema","")=="starforge.level.v1"){if(j.contains("music")){auto&m=j["music"];if(m.value("type",std::string())=="native"){musicSequence=m.at("sequence").get<int>();if(musicSequence<2||musicSequence>16)throw std::runtime_error("music sequence");if(musicSequence!=14)musicSequence|=32768;}else if(m.value("type",std::string())=="custom"){musicSequence=65535;StarForge_MusicLoad(1);}stage=0;}return;}if(j.value("schema","")!="starforge.native.v1")return;
  int id=j.at("levelId").get<int>();if(id==2&&j.contains("encounterOrigin")){const auto origin=j["encounterOrigin"].get<std::string>();arrivalOrigin=origin=="katina"?1:origin=="fortuna"?0:-1;}if(id!=0&&id!=1&&id!=2&&id!=3&&id!=5&&id!=6&&id!=7&&id!=8)throw std::runtime_error("stage");
  if(j["sections"].size()>2||j["sections"].empty())throw std::runtime_error("sections");
  for(auto&s:j["sections"]){int phase=s.at("phase").get<int>();if(phase<0||phase>1||s["placements"].size()>10000)throw std::runtime_error("phase or count");auto& target=sections[phase];
@@ -136,3 +137,5 @@ extern "C" int StarForge_StaticApply(void* object,float* position,float* rotatio
 
 extern "C" unsigned short* StarForge_StaticScript(void* object){auto it=liveInstances.find(object);if(it==liveInstances.end()||!it->second.settings->staticScenery||it->second.settings->actorType<0||it->second.settings->actorType>107)return nullptr;auto&s=*it->second.settings;static unsigned short script[4];script[0]=(104<<9)|(std::max(0,std::min(511,s.hp)));script[1]=s.actorType;script[2]=127<<9;script[3]=0;return script;}
 
+
+#include "StarForgeImportedScene.inc"
