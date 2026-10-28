@@ -1,6 +1,33 @@
 {
   "releases": [
     {
+      "version": "0.30.0",
+      "date": "2026-10-27",
+      "changes": [],
+      "sections": [
+        {
+          "title": "Feature Additions",
+          "changes": [
+            "Select individual objects in prepared editable scenery imports by clicking their visible geometry or searching the scenery list.",
+            "Move and rotate imported scenery using the toolbox or Properties, delete individual pieces, reset their placement, and undo/redo edits. Saved edits update game drawing, physical collision and native tree placements together."
+          ]
+        },
+        {
+          "title": "Bugfixes",
+          "changes": [
+            "Keep scenery objects separate through the prepared import pipeline instead of merging unrelated objects into shared drawing chunks.",
+            "Validate object ownership, collision ranges, transforms and deletion records before running imported projects."
+          ]
+        },
+        {
+          "title": "Documentation",
+          "changes": [
+            "Explain editable imported scenery, original-size assets, scene coordinates, native tree billboard rotation and older read-only imports in Help."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.29.0",
       "date": "2026-10-27",
       "sections": [

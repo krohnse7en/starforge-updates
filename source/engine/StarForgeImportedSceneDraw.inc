@@ -26,7 +26,7 @@ void StarForge_ImportedDraw(void){
   gDPSetCycleType(gMasterDisp++,G_CYC_1CYCLE);gDPSetCombineMode(gMasterDisp++,G_CC_MODULATEIA,G_CC_MODULATEIA);gDPSetTextureLUT(gMasterDisp++,G_TT_NONE);gDPSetTextureFilter(gMasterDisp++,G_TF_BILERP);gSPTexture(gMasterDisp++,65535,65535,0,G_TX_RENDERTILE,G_ON);
   if(pass){gDPSetRenderMode(gMasterDisp++,G_RM_AA_ZB_XLU_SURF,G_RM_AA_ZB_XLU_SURF2);}else{gDPSetRenderMode(gMasterDisp++,G_RM_AA_ZB_OPA_SURF,G_RM_AA_ZB_OPA_SURF2);}
   for(i=0;i<sImportedCount;i++){
-   c=SFI_Get(i);if((int)(c->flags&1)!=pass||!sImportedLists[i])continue;z=c->origin[2]+gPathProgress;
+   c=SFI_Get(i);if(c->vertexCount==0||(int)(c->flags&1)!=pass||!sImportedLists[i])continue;z=c->origin[2]+gPathProgress;
    if(z-c->radius>2200*SFI_VertexScale()||z+c->radius< -SFI_Far()||fabsf(c->origin[0]-gPlayer[0].xPath)>6000*SFI_VertexScale()+c->radius)continue;
    if(c->flags&2){gDPLoadTextureBlock(gMasterDisp++,D_CO_6028A60,G_IM_FMT_RGBA,G_IM_SIZ_16b,32,32,0,G_TX_WRAP|G_TX_NOMIRROR,G_TX_WRAP|G_TX_NOMIRROR,5,5,G_TX_NOLOD,G_TX_NOLOD);int scroll=(gGameFrameCount/2)&127;gDPSetTileSize(gMasterDisp++,G_TX_RENDERTILE,0,scroll,124,124+scroll);}else{gDPLoadTextureBlock(gMasterDisp++,c->texture,G_IM_FMT_RGBA,G_IM_SIZ_32b,32,32,0,G_TX_WRAP|G_TX_NOMIRROR,G_TX_WRAP|G_TX_NOMIRROR,5,5,G_TX_NOLOD,G_TX_NOLOD);}
    FrameInterpolation_RecordOpenChild(c,SFI_Generation());Matrix_Push(&gGfxMatrix);Matrix_Translate(gGfxMatrix,c->origin[0],c->origin[1],z,MTXF_APPLY);Matrix_Scale(gGfxMatrix,SFI_VertexScale(),SFI_VertexScale(),SFI_VertexScale(),MTXF_APPLY);Matrix_SetGfxMtx(&gMasterDisp);gSPDisplayList(gMasterDisp++,sImportedLists[i]);Matrix_Pop(&gGfxMatrix);FrameInterpolation_RecordCloseChild();drawn++;

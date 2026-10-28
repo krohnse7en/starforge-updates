@@ -4,6 +4,7 @@
 #include <numeric>
 #include <limits>
 #include <cstring>
+#include <set>
 namespace SFI {
 struct Vec {float x,y,z;};
 static Vec add(Vec a,Vec b){return {a.x+b.x,a.y+b.y,a.z+b.z};}
@@ -52,6 +53,7 @@ static void query(int i,Vec p,float r,float& best,Vec& correction){
  for(int j=n.begin;j<n.begin+n.count;j++){Vec closest=nearest(p,triangles[order[j]]),d=sub(p,closest);float distance=std::sqrt(dot(d,d));if(distance<r&&r-distance>best){best=r-distance;correction=distance>.0001f?mul(d,(best+.5f)/distance):Vec{0,r+.5f,0};}}
 }
 }
+#include "StarForgeImportedEdits.inc"
 extern "C" void SFI_Load(const char* text){using namespace SFI;ready=false;chunks.clear();triangles.clear();trees.clear();nodes.clear();route.clear();recoveryRoute.clear();generation++;lastReport=-1;
  try{auto j=nlohmann::json::parse(text);if(!j.contains("importedScene")||!j["importedScene"].value("enabled",false))return;debug=j["importedScene"].value("debug",false);
   auto config=j["importedScene"];nativeFlight=config.value("nativeFlight",true);worldScale=config.value("worldScale",1.f);speed=config.value("speedUnitsPerSecond",1200.f);shipRadius=config.value("shipRadius",35.f);farDistance=config.value("farDistance",16000.f);
@@ -69,7 +71,8 @@ extern "C" void SFI_Load(const char* text){using namespace SFI;ready=false;chunk
   for(auto&k:route)for(float&v:k)v*=worldScale;
   if(config.contains("route")){route.clear();for(auto&entry:config["route"]){if(route.size()>=4096||!entry.is_array()||entry.size()!=3)throw std::runtime_error("invalid calibrated route");std::array<float,3> k;for(int i=0;i<3;i++){k[i]=entry[i].get<float>();if(!std::isfinite(k[i])||std::abs(k[i])>1000000)throw std::runtime_error("invalid calibrated route key");}if(!route.empty()&&k[0]<=route.back()[0])throw std::runtime_error("unordered calibrated route");route.push_back(k);}if(route.empty()||route.front()[0]!=0||route.back()[0]<length)throw std::runtime_error("incomplete calibrated route");}
   if(config.contains("recoveryRoute")){for(auto&entry:config["recoveryRoute"]){if(recoveryRoute.size()>=4096||!entry.is_array()||entry.size()!=3)throw std::runtime_error("invalid recovery route");std::array<float,3> k;for(int i=0;i<3;i++){k[i]=entry[i].get<float>();if(!std::isfinite(k[i])||std::abs(k[i])>1000000)throw std::runtime_error("invalid recovery route key");}if(!recoveryRoute.empty()&&k[0]<=recoveryRoute.back()[0])throw std::runtime_error("unordered recovery route");recoveryRoute.push_back(k);}if(recoveryRoute.empty()||recoveryRoute.front()[0]!=0||recoveryRoute.back()[0]<length)throw std::runtime_error("incomplete recovery route");}
-  if(config.contains("nativeTrees")){if(!config["nativeTrees"].is_array()||config["nativeTrees"].size()>6000)throw std::runtime_error("invalid native trees");for(auto&entry:config["nativeTrees"]){if(!entry.is_array()||entry.size()!=3)throw std::runtime_error("invalid native tree position");Vec p{entry[0].get<float>(),entry[1].get<float>(),entry[2].get<float>()};if(!finite(p)||std::abs(p.x)>=32767||std::abs(p.y)>=32767)throw std::runtime_error("invalid native tree position");trees.push_back(p);}std::stable_sort(trees.begin(),trees.end(),[](Vec a,Vec b){return a.z>b.z;});}
+  if(config.contains("nativeTrees")){if(!config["nativeTrees"].is_array()||config["nativeTrees"].size()>6000)throw std::runtime_error("invalid native trees");for(auto&entry:config["nativeTrees"]){if(!entry.is_array()||entry.size()!=3)throw std::runtime_error("invalid native tree position");Vec p{entry[0].get<float>(),entry[1].get<float>(),entry[2].get<float>()};if(!finite(p)||std::abs(p.x)>=32767||std::abs(p.y)>=32767)throw std::runtime_error("invalid native tree position");trees.push_back(p);}}
+  applyObjectEdits(config);nt=(uint32_t)triangles.size();std::stable_sort(trees.begin(),trees.end(),[](Vec a,Vec b){return a.z>b.z;});
   order.resize(nt);std::iota(order.begin(),order.end(),0);nodes.reserve(nt/2+1);if(nt)build(0,nt);ready=true;
   std::ofstream("StarForge/imported-scene-status.txt")<<"Imported scene ready: "<<nc<<" chunks, "<<vertices/3<<" rendered triangles, "<<nt<<" collision triangles.\n";
  }catch(const std::exception&e){chunks.clear();triangles.clear();nodes.clear();route.clear();std::ofstream("StarForge/imported-scene-status.txt")<<"Imported scene rejected: "<<e.what()<<"\n";}
