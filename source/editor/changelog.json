@@ -1,6 +1,27 @@
 {
   "releases": [
     {
+      "version": "0.30.2",
+      "date": "2026-10-27",
+      "changes": [],
+      "sections": [
+        {
+          "title": "Bugfixes",
+          "changes": [
+            "Release the Playtest button when its review is closed with \u00d7, Escape, Cancel, or by opening another tool.",
+            "Clicking Playtest restores an already-open minimized review instead of silently ignoring the click.",
+            "Restore a visible Cancel button in the Playtest review."
+          ]
+        },
+        {
+          "title": "Documentation",
+          "changes": [
+            "Clarify how to cancel, restore and reopen Playtest review before launching Starship."
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.30.1",
       "date": "2026-10-27",
       "changes": [],
